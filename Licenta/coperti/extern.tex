@@ -1,0 +1,55 @@
+%% coperta externa
+\begin{titlepage}
+    \begin{flushleft}
+        \Large
+        {\university}
+        
+        \Large
+        {\faculty}
+        
+        \Large
+        {\studyfieldlbl \studyfield}
+        
+        \Large
+        {\studyproglbl \studyprog}
+    \end{flushleft}
+    
+    \begin{center}
+        % thesis title
+        \vspace{7.5cm}
+        \Huge
+        {\MakeUppercase{\textbf{\thesistype}}}
+        
+        \vspace{8cm}
+    \end{center}
+
+% pentru situatia cu absolvent un pic mai jos    
+%    \begin{flushleft}
+%        \Large{\bf Coordonator științific:\\}
+%        \Large{\textbf{\coordinator}} 
+%    \end{flushleft}
+    
+%    \begin{flushright}
+%        \Large{\bf Absolvent:\\}
+%        \Large{\textbf{\authornamefl}}
+%    \end{flushright}    
+
+% coordonatorul si absolventul pe aceeasi linie    
+    \begin{center}
+        \begin{minipage}[t]{0.5\textwidth}
+    	    \almostLarge{Coordonator științific:}\\
+    	    \almostLarge{\coordinator}
+        \end{minipage}\hfill
+        \begin{minipage}[t]{0.5\textwidth}\raggedleft
+    	    \almostLarge{Absolvent:}\\
+    	    \almostLarge{\authornamefl}
+        \end{minipage}
+    \end{center}
+
+    \begin{center}
+        % session
+        \vfill
+        \Large
+        \textbf{\location, \promotion}
+    \end{center}
+\end{titlepage}

@@ -1,0 +1,56 @@
+\chapter{Implementarea aplicației}
+\label{cap:cap3}
+
+(10–15 pagini)
+
+\begin{itemize}
+    \item Descrierea generală a implementării;
+    \item Probleme speciale/dificultăți întâmpinate și modalități de rezolvare;
+    \item Idei originale, soluții noi;
+    \item Se prezintă pe scurt funcționarea sistemului (câteva capturi de ecran în punctele esențiale); nu se insistă deosebit deoarece există prezentare practică
+    \item Comunicarea cu alte sisteme și salvarea/stocarea informațiilor;
+    \item Interfața cu utilizatorul; 
+    \item Se realizează calibrarea hardware și eventual software și se dau detalii despre maniera în care a fost efectuată. 
+\end{itemize}
+
+Dacă în Capitolul \ref{cap:cap2} este descrisă arhitectura aplicației la nivel conceptual (cu scheme logice, diagrame UML, structuri de clase, diagrame ER etc.), Capitolul \ref{cap:cap2} descrie implementarea soluției propuse. Această descriere trebuie să urmeze modulele prezentate în capitolul anterior, cu o eventuală referire a acestora. Se pot introduce fragmente semnificative de cod specifice fiecărui modul în parte.
+
+În acest capitol se descrie implementarea practică a proiectului. În mod uzual, puteți insera cod de dimensiuni mici, care este relevant și care se impune a fi comentat în detaliu. Astfel, Listing-ul \ref{code:c_mpi} prezintă un supergreu pas de inițializare a unui program MPI pentru a obține cinstit punctul din oficiu, în care se poate face referire la linia \ref{line:if} pentru a descrie ce face \verb|if|-u' di acolo.
+
+\begin{code}
+    \begin{minted}{c}
+        #include <stdio.h>
+        #include "mpi.h"
+        
+        int main( int argc, char **argv ) {
+        	char message[20];
+        	int myrank;	
+        		
+        	MPI_Status status;
+        
+        	MPI_Init( &argc, &argv );
+        	MPI_Comm_rank( MPI_COMM_WORLD, &myrank );
+        	
+        	if (myrank == 0) { /* codul pentru procesul 0 */|\label{line:if}|
+        		strcpy(message,"Hello");
+        		MPI_Send(message, strlen(message), MPI_CHAR, 
+        			1, 99, MPI_COMM_WORLD);
+        	} else { /* codul pentru procesul 1 */
+        		MPI_Recv(message, 20, MPI_CHAR, 
+        			0, 99, MPI_COMM_WORLD, &status);
+        		printf("received :%s:\n", message);
+        	}
+        	
+        	MPI_Finalize();
+        	return 0;
+        }
+    \end{minted}
+    \caption{Supercod MPI în C} 
+    \label{code:c_mpi}
+\end{code}
+
+Codul complet relevant se va include în anexe (vezi Anexele \ref{anexa6:listing_python}, \ref{anexa7:listing_kotlin} și \ref{anexa8:listing_xml}). De exemplu, Listing-ul \ref{code:xml_pom} (Anexa \ref{anexa8:listing_xml}) prezintă fișierul de configurare \textit{maven} pentru un serviciu SOAP minimal.
+
+\textcolor{gray}{\lipsum}
+
+\textcolor{gray}{\lipsum}
