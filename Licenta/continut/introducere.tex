@@ -25,7 +25,30 @@ Aș putea să continui aproape la nesfârșit cu aplicațiile numerelor aleatoar
 
 \pagebreak
 
-\section{Obiectivele lucrării}
+\subsection{Numerele aleatoare "adevărate", pe scurt}
+În concepția convențională, există două mari categorii de generatoare de numere aleatoare: generatoare de numere "pseudoaleatoare", numite în continuare PRNG \textit{[en. "Pseudo-random number generator"}, și generatoare de numere aleatoare "adevărate", sau "veritabile", numite în continuare TRNG, sau alternativ HRNG \textit{[en. "True ...", "Hardware..."]}. PRNG-urile sunt simpli algoritmi care se folosesc ori de formule matematice, ori de tabele de numere precalculate pentru a-și produce numerele aleatoare, care par a fi suficient de aleatoare în urma testelor statistice. Domeniul generării numerelor pseudoaleatoare este foarte bine cercetat, iar unele PRNG-uri moderne sunt atât de "bune" încât sunt practic de nedestins cu numerele aleatoare "veritabile". Totuși, problema principală a numerelor pseudoaleatoare este că sunt \textit{deterministe}, adică o secvență de numere poate fi reprodusă, atât timp cât se știe punctul de plecare a acelei secvențe. Totuși, avantajul principal este că sunt \textit{eficiente}, din cauză ca pot produce un număr foarte mare de numere într-un timp foarte scurt. 
+
+Pe de cealaltă parte, numerele aleatoare "veritabile" produse de un TRNG sunt în general extrase dintr-o sursă de \textit{entropie} fizică (voi discuta mai târziu conceptul de "entropie" și TRNG-urile mai în detaliu), sistemele de calcul moderne folosind, de exemplu, informații de la driverele kernel-ului, mișcările mouse-ului, elemente de timing interne sistemului de operare, varianțe din activitatea ventilatoarelor calculatorului, ș.a.m.d. Aceste surse de entropie sunt motivul pentru care acestea sunt uneori numite și "Hardware" Random Number Generators. Diferența principală dintre TRNG-uri și PRNG-uri este faptul că acestea sunt nedeterministe și neperiodice. 
+
+Totuși, pe lângă aceste două categorii, designerii de generatoare de numere aleatoare propun o nouă categorie de generatoare: generatoarele de numere aleatoare \textit{cuantice}. \cite{IDQuantique:QuantumvsClassical}. ID Quantique, o firmă elvețiană care produce QRNG-uri \textit{[en. "Quantum ..."]} la nivel hardware, discreditează condițiile fizice meta-stabile sau "haosul" necesar culegerii de entropie în TRNG-uri, și propune generatoarele de numere aleatoare cuantice, bazate pe fenomene cuantice, fundamental probabilistice, pentru culegerea entropiei.
+
+Lucrarea de față își propune analiza "bunătății" celor trei categorii de generatoare de numere aleatoare (conceptul de "bunătate" va fi definit riguros mai ulterior în lucrare), din mai multe perspective, atât prin testarea "aleatorității" secvențelor rezultate, cât și prin testarea empirică a performanței algoritmilor de generare (respectiv, a circuitelor cuantice aplicate în cazul QRNG-urilor). 
+
+\pagebreak
+
+\section{Structura și metodele lucrării}
+Lucrarea de față va avea trei mari componente:
+\begin{itemize}
+    \item Fundamentarea teoretică riguroasă a tuturor conceptelor cu aplicabilitate în interiorul lucrării (ex. fundamentare matematică - matematică complexă și algebră liniară, postulatele mecanicii cuantice, elemente de statistică pentru analiza empirică, etc.). Tot aici vor fi definite specificațiile celor două "aplicații" din cadrul acestei lucrări;
+    \item Analiza platformelor pe care se vor executa aplicațiile, motivul alegerii lor, modulele generale și proiectarea în ansamblu a celor două aplicații din lucrare;
+    \item Descrierea implementării propriu-zise a aplicațiilor și rezultatele intermediare ale lucrării (în general, statistice).
+\end{itemize}
+
+Pe lângă acestea, se va adăuga un capitol de descriere a utilizării celei de-a doua aplicații ("aplicația" propriu-zisă din titlul lucrării), în cadrul căreia se vor prezenta și rezultatele finale ale întregii lucrări și se vor descrie în detaliu rezultatele finale.
+
+
+În concluzie, lucrarea va încerca a descrie fundamentele necesare conceptelor de generare de numere aleatoare "clasice" și "cuantice" și va prezenta două aplicații, una pentru testarea metodelor utilizate și a doua pentru a oferi o aplicație propriu-zisă, utilizabilă de un end-user, cu interfață grafică ș.a.m.d.
+
 
 
 
