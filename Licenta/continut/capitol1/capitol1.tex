@@ -93,4 +93,65 @@ Oricum, mai departe de \verb|#.#.#.#| \textbf{\textit{NU}} trebuie să se ajung�
 \chapter{Fundamentarea teoretică și documentarea bibliografică}
 \label{cap:cap1}
 
-Structura următoarelor câteva subcapitole este puternic influențată de structura cursului de Calcul Cuantic din cadrul Facultății de Informatică de la Universitatea "Alexandru Ioan Cuza" \cite{misc:web:QCCuza}, predat de doamna Conf. Arusoaie Andreea , fără de care această lucrare probabil că nu ar fi fost posibilă.
+Structura următoarelor câteva subcapitole este puternic influențată de structura cursului de Calcul Cuantic din cadrul Facultății de Informatică de la Universitatea "Alexandru Ioan Cuza", predat de doamna Conf. Arusoaie Andreea, fără de care această lucrare probabil că nu ar fi fost posibilă. Voi încerca a prezenta doar elementele relevante, pe scurt, pentru această lucrare, rezumând / scurtând / eliminând acele elemente care nu vor avea nici o legătură cu lucrarea.
+
+\section{Elemente de algebră liniară}
+
+\subsection{Mulțimea numerelor complexe}
+
+Mulțimea numerelor complexe este un sistem de numărare care conține numerele reale și o unitate imaginară $i$ care îndeplinește proprietatea:
+\[i^2 = -1\]
+Uneori, definiția unității imaginare este dată in literatura de specialitate ca fiind: \[i = \sqrt{-1}\]
+Se numește număr complex orice număr de forma \[z = a + ib,\] unde $a$ și $b$ sunt numere reale. Mulțimea numerelor complexe $\mathbb{C}$ este așadar definită în felul următor: 
+\[ \mathbb{C} = \{z \enspace|\; z = a + ib,\enspace a,\enspace b \enspace\in\enspace \mathbb{R},\enspace i^2 = -1\} \]
+
+Conjugatul unui număr complex $z$ este definit ca:
+\[\bar{z} \overset{not.}{=} z\text{*} = a - ib\]
+Notația cu bară deasupra pentru $z$ este deseori utilizată în matematică, iar notația cu asterisc este utilizată mai des în fizică. Pe parcursul acestei lucrări se va folosi a doua notație.
+
+Modulul sau amplitudinea unui număr complex:
+\[z = \sqrt{a^2 + b^2}\]
+
+\textbf{Proprietăți ale numerelor complexe}:
+
+Fie $z, w \in \mathbb{C}$. Atunci au loc:
+\begin{itemize}
+    \item $\overline{z + w} = \bar{z} + \bar{w}$ 
+    \item $z \cdot \bar{z} = \bar{z} \cdot z = |z|^2$
+    \item $\bar{\bar{z}} = z$
+    \item $|z| = |\bar{z}|$
+\end{itemize}
+\pagebreak
+
+Forma trigonometrică a numerelor complexe este dată de formula:
+\[z = A(\cos \theta + i \sin \theta) = Ae^{i\theta}\] 
+
+Unde $A = \sqrt{a^2 + b^2}$,  $\theta = \arctan\left(\dfrac{b}{a}\right)$
+
+\subsection{Spații vectoriale}
+Fie $V \neq \phi$ și $K$ un corp comutativ peste $\mathbb{R}$ sau $\mathbb{C}$. Un corp este un triplet $(K, +, *)$ în care $K$ este o mulțime cu cel puțin două elemente, iar $+$ și $*$ doi operatori satisfăcând următoarele axiome:
+\begin{itemize}
+    \item $(K,+)$ este un grup abelian cu un element neutru $0$.
+    \item $(K \setminus \{0\}, *)$ este grup cu un element neutru $1$.
+    \item Operatorul $*$ este distributiv față de operatorul $+$.
+\end{itemize}
+
+Dacă în plus operatorul $*$ este comutativ (adică axioma doi implică conceptul de \textit{grup abelian}), atunci spunem că tripletul $(K, +, *)$ este \textit{corp comutativ}.
+
+Un grup este o mulțime prevăzută cu un operator care combină orice două elemente ale ei pentru a forma un al treilea element în așa fel încât sunt satisfăcute patru condiții, denumite axiomele grupurilor.
+
+Se numește spațiu liniar (sau vectorial) peste K, o mulțime V, inzestrată cu:
+\begin{itemize}
+    \item \textit{o lege internă} $\enspace+$: \enspace$V \times V \rightarrow V,\enspace (x, y) \rightarrow x + y,\enspace \forall x,y \in V$,
+    \item \textit{o lege externă} $\enspace\cdot$: $K \times V \rightarrow V, \enspace (\alpha, x) \rightarrow \alpha \cdot x, \enspace \forall \alpha \in K, x \in V$, 
+\end{itemize}
+
+Astfel încât sunt îndeplinite următoarele axiome:
+
+\begin{itemize}
+    \item $x + (y + z) = (x + y) + z,  \enspace \forall x,y,z \in V$,
+    \item $x + y = y + x, \enspace \forall x, y \in V$,
+    \item $\exists0 \in V, \forall x \in V: x + 0 = 0 + x = x$,
+    \item $\forall x \in V, \exists (-x) \in V: x + (-x) = (-x) + x = 0$,
+    \item $$
+\end{itemize}
