@@ -153,5 +153,77 @@ Astfel încât sunt îndeplinite următoarele axiome:
     \item $x + y = y + x, \enspace \forall x, y \in V$,
     \item $\exists0 \in V, \forall x \in V: x + 0 = 0 + x = x$,
     \item $\forall x \in V, \exists (-x) \in V: x + (-x) = (-x) + x = 0$,
-    \item $$
+    \item $\alpha \cdot (x+y) = \alpha \cdot x + \alpha \cdot y, \forall \alpha \in K, x,y \in V$,
+    \item $(\alpha + \beta)\cot x = \alpha \cdot x + \beta \cdot y\ forall \alpha, \beta \in K, x \in V$,
+    \item $\alpha \cdot (\beta \cdot x) = (\alpha \beta ) \cdot x, \forall \alpha, \beta \in K, x \in V$,
+    \item $1 \cdot x = x, \forall x \in $, unde 1 este elementul unitate din K.
 \end{itemize}
+
+Elementele aparținând spațiului liniar $V$ sunt numite vectori, iar elementele aparținând lui $K$ se numesc scalari. Deseori, pentru "legile" interne / externe definite mai sus se folosesc denumirile de "adunarea vectorilor" pentru "+", respectiv "multiplicarea vectorului cu scalar" pentru "$\cdot$". Un element 0 $\in V$ se numește vector nul. În cazul în care $K = \mathbb{R}$, atunci V se numește spațiu liniar real, iar în cazul în care $K = \mathbb{C}$, atunci V se numește spațiu liniar complex. 
+Întotdeauna, spațiul stărilor unui sistem cuantic este descris în termenii unui spațiu liniar complex.
+
+În cadrul acestei lucrări, vectorii vor fi considerați a fi în formă \textit{coloană}, adică vor fi scriși în felul următor:
+\[
+\begin{bmatrix}
+1 \\ 2
+\end{bmatrix}
+\]
+dar, de dragul lizibilității vor fi scriși în rând cu textul sub forma (1, 2). În acest caz, se consideră a fi în continuare sub formă coloană.
+
+Fie $\forall n \in \mathbb{N}\text{*}$.
+
+Atunci $\mathbb{C}^n = \mathbb{C} \times \mathbb{C} \times ... \times \mathbb{C}$. Dacă $u \in \mathbb{C}^n, u=(u1, u2, ..., un) \overset{not.}{=} \begin{bmatrix}
+u1 \\ u2 \\ ... \\ un
+\end{bmatrix}, ui \in \mathbb{C}$.
+
+Atunci, în concluzie, $(\mathbb{C}^n, +, \cdot, \mathbb{C})$ este spațiul vectorial complex adus în discuție anterior, util pentru descrierea spațiului stărilor unui sistem cuantic.
+
+\subsection{Spațiu euclidian complex}
+
+Fie $V$ un spațiu liniar peste $\mathbb{C}$. Se numește produs scalar complex funcția $\braket{\cdot, \cdot}: V \times V \rightarrow \mathbb{C}$ cu proprietățile:
+\begin{itemize}
+    \item $\braket{u,u} \geq 0, \forall u \in V$,
+    \item $\braket{u,u} = 0, \iff u = 0$,
+    \item $\braket{u,v} = \overline{\braket{v, u}}, \forall u, v \in V$,
+    \item $\braket{u, \alpha v + \alpha ' v '} = \alpha \braket{u, v} + \alpha ' \braket{u ', v}, \forall \alpha, \alpha ' \in \mathbb{C}, u, u ' , v \in V$,
+    \item $\braket{\alpha u, v} = \bar{\alpha} \braket{u, v}, \alpha \in \mathbb{C}$.
+\end{itemize}
+
+Un spațiu liniar peste $\mathbb{C}$ înzestrat cu produs scalar se numește spațiu euclidian complex sau spațiu prehilbertian.
+
+Produsul scalar a vectorilor $u, v \in \mathbb{C}^n$ este definit prin:
+\[
+    \braket{u,v} = \sum_{i=0}^{n} \bar{u_i v_i}, \enspace u_i, v_i \in \mathbb{C}
+\]
+În fizica cuantică, o stare a unui sistem este reprezentată de un vector dintr-un spațiu Hilbert, adică un spațiu vectorial complex dotat cu un produs scalar.
+
+Norma euclidiană a vectorului $u \in \mathbb{C}^n$ este definită prin:
+\[
+||u|| = \sqrt{\braket{u,u}} = \sqrt{\sum_{i=1}^{n} |u_i|^2}.
+\]
+
+\subsection{Baze ortonormale}
+
+Fie $V$ un spațiu euclidian de dimensiune $n$ și fie $B = \{b_1, b_2, ... , b_n\}$ o bază.
+
+$B \subset V$ se numește \textit{bază} a spațiului $V$ dacă $B$ este liniar independentă și Span(B) = V, unde mulțimea Span(U) a unui spațiu euclidian U este definită prin  \[Span(U) =\sum_{i=1}^{n} \alpha_i u_i, \enspace n \in \mathbb{N}\text{*}, u_1, ... u_n \in U\] iar iar elementele $u_1, ..., u_n$ se numesc liniar independente dacă ecuația \[\beta_1 u_1 + ... + \beta_n u_n =0\], are soluție unică$\beta_1 = ... = \beta_n = 0$.
+
+
+Pentru $\forall u, v \in V$, are loc 
+\[
+u = \sum_{i=1}^{n} u_i b_i, \enspace v = \sum_{i=1}^n v_i b_i,
+\]
+iar expresia produsului scalar este 
+\[
+\braket{u, v} = \sum_{i=1}^{n} \sum_{j=1}^{n} u_i v_j \braket{b_i, b_j}.
+\]
+Spunem că baza B este \textit{bază ortonormală} dacă
+\[
+\braket{b_i, b_j} =
+\begin{cases}
+0, \enspace i \neq j, \\
+1, \enspace i = j.
+\end{cases}
+\]
+
+
