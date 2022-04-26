@@ -107,7 +107,7 @@ Se numește număr complex orice număr de forma \[z = a + ib,\] unde $a$ și $b
 
 Conjugatul unui număr complex $z$ este definit ca:
 \[\bar{z} \overset{not.}{=} z\text{*} = a - ib\]
-Notația cu bară deasupra pentru $z$ este deseori utilizată în matematică, iar notația cu asterisc este utilizată mai des în fizică. Pe parcursul acestei lucrări se va folosi a doua notație.
+Notația cu bară deasupra pentru $z$ este deseori utilizată în matematică, iar notația cu asterisc este utilizată mai des în fizică. Pe parcursul acestei lucrări se vor folosi oarecum interschimbabil cele două notații datorită gamei largi de surse de studiu (cărți, cursuri din diferite spații culturale / academice ș.a.m.d.)
 
 Modulul sau amplitudinea unui număr complex:
 \[z = \sqrt{a^2 + b^2}\]
@@ -225,5 +225,117 @@ Spunem că baza B este \textit{bază ortonormală} dacă
 1, \enspace i = j.
 \end{cases}
 \]
+
+\subsection{Operatori liniari. Conjugata. Transpusa.}
+
+Fie $\mathcal{L}(X, Y)$ mulțimea operatorilor liniari X cu valori în Y, unde noțiunea de \textit{operator liniar} înseamnă orice aplicație $A: X \rightarrow Y$ unde 
+\[
+A (\alpha x + \beta y) = \alpha A(x) + \beta A(y), \enspace \forall \alpha, \beta \in \mathbb{C}, \enspace x, y \in X.
+\]
+
+Fie $X = \mathbb{C}^m$ și $Y = \mathbb{C}^n$ și fie $A \in \mathcal{L}(X,Y)$.
+Operatorul \textit{conjugat} $\bar{A} \in \mathcal{L}(X, Y)$ are matricea asociată definită prin
+\[
+\bar{A}(i,j) = \overline{A(i,j)}, i \in \{1, ..., m\}, j \in \{1, ..., n\}
+\]
+Operatorul \textit{transpus} $A^T \in \mathcal{L}(X, Y)$ este operatorul ce are matricea asociată
+\[
+A^T(i,j) = A(j,i).
+\]
+
+
+\section{Tranziția către calcul cuantic}
+\subsection{Notația bra ket (Dirac)}
+
+Voi prezenta puțin mai târziu postulatele mecanicii cuantice, printre care se numără și definiția unui \textit{bit cuantic}, sau \textit{qubit}, dar deocamdată aș dori să prezint notația bra-ket pentru vectori de stare, utilizați intens în următoarele secțiuni. 
+
+Deseori, starea unui qubit este reprezentat de un versor din spațiul de două elemente complexe:
+\[
+\ket{\psi} = \begin{bmatrix} \alpha \\ \beta \end{bmatrix} \in \mathbb{C}^2,
+\]
+unde $\alpha, \beta \in \mathbb{C}$. Așadar, $\ket{\cdot}$ - notația \textit{ket} a vectorilor de stare.
+
+Pentru același $\psi$ definit mai sus, definim 
+\[
+\bra{\psi} = \overline{(\ket{\psi})^T} = \begin{bmatrix}
+\bar{\alpha} \bar{\beta}
+\end{bmatrix}
+\]
+Deci, $\bra{\cdot}$ - notația \textit{bra} a vectorilor de stare, care e pur și simplu conjugata transpusă a vectorului de stare scris în notația ket.
+
+\subsection{Produsul scalar pentru spațiul vectorial complex}
+Un produs scalar pe un spațiu vectorial complex $V$ este o operație ce asociează fiecărei perechi de vectori $\bra{u}$, $\bra{v}$ un număr complex
+\[
+\braket{u|v} = \braket{\ket{u}, \ket{v}} = \sum_{i=1}^{n} \bar{u_i}v_i
+\]
+
+\subsection{Operatorul adjunct}
+Fie $A$ un operator liniar pe un spațiu vectorial $V$. Atunci, există un unic operator $A^\dagger$ pe V astfel încât $\forall \ket{v}, \ket{w} \in V$ să avem
+\[
+    \braket{v|Aw} = \braket{A^\dagger v | w}.
+\]
+Operatorul liniar $A\dagger$ se numește operatorul adjunct al lui A (citit deseori și ca "dagger").
+În termeni matriceali, $A^\dagger = \overline{A^T}$, unde $\overline{A^T}$ reprezintă conjugata matricei A, transpuse.
+Pentru același $\ket{\psi}$ definit în prima subsecție a acestei secții, $\ket{\psi}^\dagger = \bra{\psi} = \overline{\ket{\psi}^T}$.
+
+\subsubsection{Proprietăți ale operatorului adjunct}
+
+Fie $V$ un spațiu Hilbert de dimensiune $n$.
+Spunem că operatorul (matricea) A este normal dacă
+\[
+AA^\dagger = A^\dagger A;
+\]
+Spunem că operatorul A este hermitian sau autoadjunct dacă 
+\[
+A = A^\dagger
+\]
+Spunem că un operator A este \textit{unitar} dacă
+\[
+A A^\dagger = A^\dagger A = I_n
+\]
+Operatorii unitari satisfac:
+\[
+\braket{Au|Av} = \braket{u|v}.
+\]
+
+Aceste lucruri vor fi foarte importante când voi prezenta conceptul de \textit{poartă logică cuantică} în următoarele secțiuni.
+
+\subsection{Produsul tensorial}
+
+Fie $U, V$ două spații Hilbert de dimensiune $m$, respectiv $n$. Atunci, produsul tensorial $U \otimes V$ este un spațiu Hilbert, de dimensiune $m \cdot n$.
+
+Pentru doi vectori de stare $\ket{\psi_1} \in U$ și $\ket{\psi_2} \in V$, produsul tensorial este un vector $\ket{\psi_1} \otimes \ket{psi_2}$ din $U \otimes V$.
+
+Dacă A și B sunt doi operatori (matrice) liniari pe $U$, respectiv $V$, atunci $A \otimes B$ este un operator liniar peste $U \otimes V$ definit prin
+\[
+(A \otimes B) (\ket{\psi_1} \otimes \ket{\psi_2}) \equiv A \ket{\psi_1} \otimes B \ket{\psi_2}
+\]
+
+\subsubsection{Reprezentarea matriceală}
+
+Pentru două matrice 
+\[
+A = \begin{bmatrix}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{bmatrix}
+\]
+\[
+B = \begin{bmatrix}
+b_{11} & b_{12} \\
+b_{21} & b_{21}
+\end{bmatrix}
+\]
+
+Produsul tensorial $A \otimes B$ este definit prin:
+\[
+A \otimes B = \begin{bmatrix}
+a_{11}B & a_{12}B \\
+a_{21}B & a_{22}B
+\end{bmatrix},
+\]
+unde $a_{ij}B$ reprezintă înmulțirea matricei B cu un scalar $\implies$ matricea rezultată produsului scalar va fi de dimensiune $4 \times 4$.
+
+
 
 
