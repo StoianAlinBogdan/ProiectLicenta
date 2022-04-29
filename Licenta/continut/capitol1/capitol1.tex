@@ -337,5 +337,263 @@ a_{21}B & a_{22}B
 unde $a_{ij}B$ reprezintă înmulțirea matricei B cu un scalar $\implies$ matricea rezultată produsului scalar va fi de dimensiune $4 \times 4$.
 
 
+\section{Calcul cuantic}
 
+\subsection{Postulatele mecanicii cuantice, din perspectiva calculului cuantic}
+
+În următoarele câteva subsecțiuni voi oferi o perspectivă de ansamblu asupra celor patru postulate ale mecanicii cuantice prezentate de Nielsen și Chuang in \cite{book:QCQI10E:2011}. Voi încerca să combin explicațiile din capitolul 2 a primei părți a cărții cu cele din primul capitol, cu excepția celor despre porți logice cuantice și circuite cuantice, pe care le voi explica după ce termin perspectiva asupra postulatelor mecanicii cuantice, în același fel în care a organizat și doamna Conf. Arusoaie cursul de Quantum Computing menționat anterior.
+
+\subsubsection{\textbf{Postulatul I} - Definiția unui qubit}
+
+Enunțul postulatului este următorul: "Există un spațiu vectorial complex dotat cu produs tensorial (adică, un spațiu Hilbert) asociat oricărui sistem fizic cuantic izolat, cunoscut drept spațiul stărilor a sistemului. Sistemul este descris în totalitate de către vectorul stărilor sale, care este un vector unitar în spațiul stărilor sistemului".
+
+Într-o altă formă, am regăsit enunțul acestui postulat și sub forma următoare: "Oricărei stări fizice posibile a unui sistem cuantic îi corespunde un versor (vector de mărime 1) dintr-un spațiu vectorial complex, dotat cu un produs scalar (spațiu Hilbert)".
+
+Cel mai important lucru este faptul că starea unui sistem fizic cuantic (în cazul ) este descrisă de un versor, numit \textit{vector de stare}. 
+
+Fie $\ket{0}, \ket{1} \in \mathbb{C}$. Atunci definim:
+
+\[
+\ket{0} = \begin{bmatrix}
+1 \\ 0
+\end{bmatrix}
+\enspace
+\ket{1} = \begin{bmatrix}
+0 \\ 1
+\end{bmatrix}
+\]
+
+Atunci, mulțimea {$\ket{1}, \ket{0}$} este o bază ortonormală a lui $\mathbb{C}^2$. Așadar, orice vector de stare din spațiul stărilor poate fi scris ca o combinație liniară de stări $\ket{0}$ și $\ket{1}$, notat
+\[
+\ket{\psi} = \alpha\ket{0} + \beta\ket{1},
+\]
+unde $\alpha$ și $\beta$ sunt numere complexe, uneori numite și "amplitudini cuantice".
+
+În plus, cum starea $\ket{\psi}$ este un versor, satisface proprietatea $||\ket{\psi}|| = 1$, adică
+\[
+\sqrt{\braket{\psi|\psi}} = 1 \implies |\alpha|^2 + |\beta|^2 = 1.
+\]
+
+Așadar, vom numi starea $\ket{\psi}$ drept \textit{bit cuantic}, sau \textit{qubit}.
+
+\subsubsection{Reprezentarea geometrică a qubitului}
+
+Din proprietatea $|\alpha|^2 + |\beta|^2 = 1$ menționată anterior, putem rescrie ecuația sub forma 
+\[
+\ket{\psi} = e^{i\gamma}(\cos \frac{\theta}{2}\ket{0} + e^{i\varphi}\sin\frac{\theta}{2}\ket{1}),
+\]
+
+unde $\theta, \varphi, \gamma$ sunt numere reale. Din cauza unor motive pe care nu le voi detalia aici, factorul $e^{i\gamma}$ din față poate fi eliminat, deoarece nu are nici un efect observabil. Din acest motiv, putem scrie:
+\[
+\ket{\psi} = \cos \frac{\theta}{2} + e^{i\varphi}\sin \frac{\theta}{2}\ket{1}.
+\]
+
+Cum numerele reale $\theta$ și $\varphi$ definesc un punct pe sfera unitate tridimensională, putem folosi o reprezentare numită "sfera Bloch" pentru starea unui bit cuantic. Aceasta este o metodă foarte utilă pentru vizualizarea unui singur bit cuantic, dar din păcate nu există o generalizare trivială a sferei Bloch pentru qubiți multipli. 
+
+\begin{figure}[H]
+\centering
+    \caption{O sferă Bloch cu un vector $\ket{\psi}$ oarecare și unghiurile $\theta$ și $\varphi$}
+    \label{fig:BlochOarecare}
+\begin{tikzpicture}
+
+
+    % Define radius
+    \def\r{4}
+
+    % Bloch vector
+    \draw (0,0) node[circle,fill,inner sep=1] (orig) {} -- (\r/3,\r/2) node[circle,fill,inner sep=0.7,label=above:$\ket{\psi}$] (a) {};
+    \draw[dashed] (orig) -- (\r/3,-\r/5) node (phi) {} -- (a);
+
+    % Sphere
+    \draw (orig) circle (\r);
+    \draw[dashed] (orig) ellipse (\r{} and \r/3);
+
+    % Axes
+    \draw[->] (orig) -- ++(-\r/5,-\r/3) node[below] (x) {$x$};
+    \draw[->] (orig) -- ++(\r+0.5,0) node[right] (y) {$y$};
+    \draw[->] (orig) -- ++(0,\r+0.5) node[above] (z) {$z$};
+
+    %Angles
+    \pic [draw=gray,text=gray,->,"$\phi$"] {angle = x--orig--phi};
+    \pic [draw=gray,text=gray,<-,"$\theta$"] {angle = a--orig--z};
+    
+        
+    \draw (0,\r) node[circle,fill,inner sep=2,label={[label distance=0.01cm]75:$\ket{0}$}] (0, 5) {};
+    \draw (0,\r) node[circle,fill=white,inner sep=1.5] (0, 5) {};
+    
+    \draw (0,-\r) node[circle,fill,inner sep=2,label={[label distance=0.01cm]75:$\ket{1}$}] (0, 5) {};
+    \draw (0,-\r) node[circle,fill=white,inner sep=1.5] (0, 5) {};
+
+
+\end{tikzpicture}
+\end{figure}
+
+\subsubsection{\textbf{Postulatul II} - Evoluția unui sistem cuantic}
+
+Enunțul postulatului este următorul: "Evoluția unui sistem cuantic închis este descris de o transformare unitară. Așadar, starea $\ket{\psi}$ a sistemului la un moment de timp $t_1$ este legată de starea $\ket{\psi'}$ a sistemului la un moment de timp $t_2$ prin un operator unitar $U$ care depinde \textit{doar} de timpii $t_1$ și $t_2$.
+
+\[
+\ket{\psi'} = U\ket{\psi}. 
+\]
+
+De observat este faptul că operatorul unitar $U$ (un operator este unitar dacă $U^\dagger U = UU^\dagger = I$) nu poate depinde de $\ket{\psi}$. Acest lucru este important deoarece daca U ar putea depinde de $\ket{\psi}$, calculatoarele cuantice ar putea rezolva cu ușurință probleme NP-complexe, lucru pe care totuși nu îl voi detalia în această lucrare. 
+
+Operatorii unitari $U$ pot fi priviți ca fiind \textit{porți logice cuantice}, dar voi explica circuitele cuantice ceva mai târziu.
+
+
+\subsubsection{\textbf{Postulatul III} - Măsurarea sistemelor cuantice}
+
+Enunțul este următorul: "Măsurătorile cuantice sunt descrise de o colecție $\{M_m\}$ de operatori de măsurare. Acești operatori se aplică pe spațiul stărilor sistemului măsurat. Indexul $m$ se referă la rezultatele posibile care pot rezulta în urma experimentului. Dacă starea sistemului cuantic este $\ket{\psi}$ în momentul imediat înaintea măsurării, atunci probabilitatea ca rezultatul $m$ să apară este dată de 
+\[
+p(m) = \bra{\psi}M^\dagger_m M_m \ket{\psi},
+\]
+iar starea sistemului după măsurare este
+\[
+\frac{M_m\ket{\psi}}{\sqrt{\bra{\psi}M^\dagger_m M_m \ket{\psi}}}.
+\]
+
+Măsurarea unui qubit are două rezultate descrise de doi operatori, $M_0$ și $M_1$, definiți de
+\[
+M_0 = \ket{0}\bra{0} = \begin{bmatrix}
+1 \\ 0
+\end{bmatrix} \cdot \ket{0}^\dagger =
+\begin{bmatrix}
+1 \\ 0
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+1 & 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 \\
+0 & 0
+\end{bmatrix},
+\]
+
+\[
+M_1 = \ket{1}\bra{1} = \begin{bmatrix}
+0 \\ 1
+\end{bmatrix} \cdot \ket{0}^\dagger =
+\begin{bmatrix}
+0 \\ 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+0 & 1
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 \\
+0 & 1
+\end{bmatrix},
+\]
+
+\subsubsection{Măsurarea unui qubit în baza computațională}
+
+Dacă presupunem că starea de măsurat este $\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$, atunci probabilitatea de a măsura 0 este dată de 
+\[
+p(0) = \bra{\psi}M_0^\dagger M_0 \ket{\psi} = \bra{\psi} M_0 \ket{\psi} = |\alpha|^2,
+\]
+iar probabilitatea de a măsura 1 este
+\[
+p(1) = \bra{\psi}M_1^\dagger M_1 \ket{\psi} = \bra{\psi} M_1 \ket{\psi} = |\beta|^2.
+\]
+
+Faptul că \textbf{probabilitatea}(!!!) de a obține unul dintre cele două numere, 0 și 1 depinde de amplitudinile cuantice $\alpha$ și $\beta$, amplitudini pe care le putem manipula aplicând operatorii unitari descriși anterior este fundamental acestei lucrări. 
+
+Pe lângă măsurarea în baza computațională, adică cu rezultatele așteptate $\ket{0}$ și $\ket{1}$, se poate generaliza postulatul pentru măsuratoarea în orice bază. Acest lucru este foarte important pentru conceptul de entanglement și mulți algoritmi cuantici.
+
+\subsubsection{\textbf{Postulatul IV} - Spații de stare compuse}
+
+Enunț: "Spațiul stărilor unui sistem fizic compus este produsul tensorial al spațiilor stărilor componente".
+
+De exemplu, pentru $n$ sisteme independente, iar sistemul $i$ se găsește în starea $\ket{\psi_i}$, atunci starea sistemului cuantic compus este 
+\[
+\ket{\psi_{sistem}} = \ket{\psi_1} \otimes \ket{\psi_2} \otimes ... \otimes \ket{\psi_n}.
+\]
+
+\subsubsection{Entanglement cuantic, pe scurt}
+Spunem că starea $\ket{\psi}$ de 2 qubiți este \textit{entangled} sau "corelată" dacă $\nexists \ket{\psi_1}$ și $\ket{\psi_2}$ astfel încât $\ket{\psi} = \ket{\psi_1} \otimes \ket{\psi_2}.$
+
+Dacă există cele două stări astfel încât să se aplice postulatul 4, se poate spune că starea $\ket{\psi}$ este entangled. De exemplu, starea
+\[
+\ket{\psi} = \frac{1}{\sqrt{2}}\ket{00} + \frac{1}{\sqrt{2}}\ket{11} 
+\] este entangled.
+
+\subsection{Circuite cuantice}
+
+Înainte de a descrie cele câteva porți logice cuantice utile pentru lucrarea de față, aș dori să menționez pe scurt faptul că Deutsch a demonstrat în 1985 \cite{art:Deutsch:QuantumTT:1985} că orice sistem fizic realizabil și finit poate fi simulat perfect cu un model universal de mașină de calcul ce operează cu resurse finite.
+Astfel, pentru o mașină Turing clasică care operează cu:
+\begin{itemize}
+    \item un set finit de stări $S = \{s_1, s_2, ..., s_S, s_{S+1} = {stop}\}$;
+    \item un alfabet de simboluri $A = \{a_1, ..., a_A, a_{A+1} = {stop}\}$;
+    \item un set finit de instrucțiuni $I = \{i_1, i_2, ... , i_I\}$
+\end{itemize}
+
+există un echivalent cuantic, numit \textit{mașină Turing cuantică}, care are spațiul Hilbert al stărilor 
+\[
+H_T = H_c \otimes H_p \otimes H_m,
+\]
+unde $H_p$  este spațiul Hilbert al stărilor procesorului, $H_m$ este un spațiu asociat unui număr infinit de qubiți din care se utilizează doar o porțiune finită la un moment dat și $H_c$ este spațiul stărilor asociat cursorului care asigură interacțiunea dintre unitatea de control și banda de memorie.
+
+Așadar, între mașina Turing cuantică și cea clasică există următoarele corespondențe:
+\begin{itemize}
+    \item $S \rightarrow H_p$,
+    \item $A \rightarrow$ spațiul stărilor qubiților $\mathbb{C}^2$,
+    \item $I \rightarrow$ evoluțiile unitare în timp a stării cuantice $\ket{\psi} \in H_T$.
+\end{itemize}
+
+Mai departe, în această secțiune voi prezenta doar cele câteva porți logice cuantice utile pentru această lucrare, dar voi adăuga și altele într-o anexă, deoarece vor fi utilizate, implicit, în unele metode de generare de numere aleatoare cuantice pe care le voi analiza mai târziu. Atunci când voi utiliza un circuit cuantic a cărui componente sunt generate automat (cu varii porți logice cuantice), voi menționa acest lucru explicit.
+
+Circuitele logice cuantice sunt reprezentate sub forma unor diagrame care arată cam ca în felul următor:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{continut/capitol1/figuri/TeleportationCircuit.png}
+    \caption{Circuitul pentru teleportarea unui qubit. Nu voi explica ce înseamnă acest lucru, contează doar cum arată un circuit oarecare.}
+    \label{fig:CircuitOarecare}
+\end{figure}
+
+Așadar, evoluția sistemului cuantic se interpretează de la stanga spre dreapta; în stânga față de fiecare linie care reprezintă starea fiecărui qubit individual se notează starea inițială a acelui qubit. Deseori, această stare este $\ket{0}$. Porțile logice cuantice pentru qubiți individuali sunt marcați sub forma unui dreptunghi cu un simbol reprezentativ în interior, iar cele care actionează asupra mai multor qubiți sunt reprezentați în diferite feluri, dar fac întotdeauna legătura între liniile mai multor qubiți. Liniile simple sunt pentru qubiți iar liniile duble sunt pentru biți clasici. Simbolul cu un "metru" reprezintă operația de măsurare.
+
+Cea mai și cea mai importantă poartă logică cuantică pentru această lucrare este poarta Hadamard. Poarta Hadamard, față de porțile Pauli (prezentate în anexe), ne permit să ne îndepartăm de polii sferei Bloch și să obținem o superpoziție de $\ket{0}$ și $\ket{1}$. Transformarea Hadamard este definită prin:
+\[
+H\ket{0} = \frac{1}{\sqrt{2}} \ket{0} + \frac{1}{\sqrt{2}}\ket{1} = \ket{+},
+\]
+\[
+H\ket{1} = \frac{1}{\sqrt{2}} \ket{0} - \frac{1}{\sqrt{2}}\ket{1} = \ket{-}.
+\]
+
+Iar reprezentarea matriceală a transformării Hadamard este 
+\[
+H = \frac{1}{\sqrt{2}}\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix}
+\]
+
+De asemenea, transfomarea Hadamard poate fi exprimată ca o rotație de 90 grade în jurul axei Y, urmată de o rotație de 180 grade în jurul axei X, notat
+\[
+H = XY^{1/2},
+\]
+unde X și Y sunt porțile Pauli, notația cu exponent $\frac{1}{2}$ reprezentând o jumătate de rotație.
+
+Efectul porții Hadamard:
+\begin{figure}[!htb]
+\minipage{0.5\textwidth}
+  \includegraphics[width=\linewidth]{continut/capitol1/figuri/BlochDefault.png}
+  \caption{Starea unui qubit inițializat în $\ket{0}$}\label{fig:bloch_default1}
+\endminipage\hfill
+\minipage{0.5\textwidth}
+  \includegraphics[width=\linewidth]{continut/capitol1/figuri/BlochHadamard.png}
+  \caption{După aplicarea transformării Hadamard}\label{fig:bloch_hadamard}
+\endminipage\hfill
+\end{figure}
+
+Așadar, cum amplitudinile cuantice $\alpha$ și $\beta$ din definiția qubitului sunt, după aplicarea porții Hadamard, amândouă $\frac{1}{\sqrt{2}}$, probabilitatea de obține fiecare dintre cele două stări, $\ket{0}, \ket{1}$ după măsurare este $(\frac{1}{\sqrt{2}})^2$, adică exact 1/2! Acest lucru practic trivializează conceptul fundamental a lucrării de față, adică acela de a realiza un generator de numere aleatoare folosind calculul cuantic, deoarece o simplă aplicare a porții Hadamard obține generarea unui număr cuantic exact uniform! Totuși, în capitolele următoare, voi realiza mai multe metode de generare a numerelor aleatoare cuantice și voi încerca să le demonstrez corectitudinea (adică, numerele generate sunt cu adevărat aleatoare) și să le măsor performanțele. În acest scop, pe lângă poarta Hadamard voi mai folosi următoarele porți:
+
+\begin{itemize}
+    \item Poarta de rotație generică în jurul axei y Ry
+\end{itemize}
+Ry este o poartă de rotație parametrizată. Reprezintă o rotație de $\theta$ radiani în jurul axei y.
 
