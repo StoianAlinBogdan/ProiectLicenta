@@ -595,5 +595,91 @@ Așadar, cum amplitudinile cuantice $\alpha$ și $\beta$ din definiția qubitulu
 \begin{itemize}
     \item Poarta de rotație generică în jurul axei y Ry
 \end{itemize}
-Ry este o poartă de rotație parametrizată. Reprezintă o rotație de $\theta$ radiani în jurul axei y.
+Ry este o poartă de rotație parametrizată. Reprezintă o rotație de $\theta$ radiani în jurul axei y. Trasformatea Ry este următoarea:
+\[
+R_y(\theta) = \begin{bmatrix}
+\cos \frac{\theta}{2} & -\sin \frac{\theta}{2} \\
+\sin \frac{\theta}{2} & \cos \frac{\theta}{2}
+\end{bmatrix}
+\]
+
+În acest sens, pentru $\theta = \frac{\pi}{2}$, efectul acestei porți este exact același cu cel a unei porți Hadamard pentru un qubit inițializat în starea $\ket{0}$, fără "overhead"-ul unei rotații suplimentare în jurul axei x, lucru care, cum voi observa în capitolele următoare, are un efect relevant asupra performanței unui calculator cuantic!
+
+\begin{itemize}
+    \item Poarta de rotație generică U3
+\end{itemize}
+
+Aceasta este o poartă logică parametrizată care reprezintă o rotație cu 3 unghiuri Euler. Nu am găsit multă documentație despre aceasta, dar aceasta este deseori descompusă de fapt în câteva alte rotații:
+
+\[
+U3(\theta, \phi, \lambda) = RZ(\phi)RX(\phi/2)RZ(\theta)RX(\pi/2)RZ(\lambda),
+\]
+Unde $RX, RZ$ reprezintă porți generice de rotație în jurul axelor X, respectiv Z, similar cu poarta Ry descrisă anterior. De observat fapul că poarta U3 nu se folosește de o poartă Ry în descompunerea ei, motiv pentru care am analizat și performanța ei pentru generarea numerelor aleatoare. Reprezentarea matriceală a porții este următoarea:
+\[
+U3(\theta, \phi, \lambda) = \begin{bmatrix}
+\cos\frac{\theta}{2} && -e^{i\lambda} \sin \frac{\theta}{2} \\
+e^{i\phi}\sin \frac{\theta}{2} && e^{i(\phi + \lambda)} \cos \frac{\theta}{2}
+\end{bmatrix}
+\]
+
+\section{Teste statistice}
+
+Cum o mare parte din această lucrare se axează pe măsurarea performanțelor și corectitudinii mai multor metode de generare de numere aleatoare, mă voi utiliza de mai multe teste statistice pentru a verifica distribuțiile numerelor rezultate (voi testa uniformitatea numerelor generate în cazul scopului generării unei distribuții uniforme și normalitatea în cazul generării unei distribuții normale). Dar, înainte de a prezenta testele statistice, voi discuta câteva elemente de bază de statistică.
+
+\subsection{Testarea ipotezelor statistice}
+
+Formularea corectă de ipoteze statistice este probabil cel mai important aspect al cercetării din punct de vedere statistic. În acest sens, testarea statistică se face prin enunțarea a două ipoteze și apoi acceptarea (sau respingerea) ipotezei nulului:
+\begin{itemize}
+    \item Ipoteza nulului ($H_0$): reprezintă modelul pe care se dorește a se înlocui (respinge)
+    \item Ipoteza alternativă ($H_1$): noul model, care în majoritatea cazurilor reprezintă negația ipotezei nulului.
+\end{itemize}
+
+Prin respingerea ipotezei nulului, se afirmă faptul că rezultatele nu sunt datorate întamplării și se poate spune că rezultatul obținut este seminificativ din punct de vedere statistic.
+
+\subsection{Pașii unui test statistic}
+\begin{itemize}
+    \item Formularea problemei în termenii ipotezelor statistice,
+    \item Alegerea unui test statistic și o metrică asociată potrivită pentru problemă
+    \item Alegerea unui nivel de semnificație și apoi calcularea pragului de separare (valoarea critică) dintre valorile acceptabile și cele considerate inacceptabile (de obicei, o probabilitate de 95 sau 99\%),
+    \item Calcularea parametrilor statistici folosind datele eșantionului
+    \item Compararea valorii calculate cu valoarea critică pentru a decide dacă ipoteza nulului se respinge sau se acceptă.
+\end{itemize}
+
+\subsection{Valoarea p}
+
+În statistică, valoarea p este probabilitatea obținerii de rezultate cel puțin la fel de extreme ca rezultatele observate ale unui test statistic, asumând că ipoteza nulului este corectă. Valoarea p, care inseamnă valoare a probabilității, este un instrument statistic de masură, cu valori cuprinse între 0 și 1. Este folosită în cadrul testării ipotetice. 
+
+Valoarea p se calculeaza pornind de la deviația dintre o valoare observată și o valoare aleasă de referință, știind funcția densitate de probabilitate a statisticii, cu o diferență mai mare însemnând o valoare mai mică pentru valoarea p. 
+
+Deci, valoarea p reprezintă probabilitatea ca efectele observate să fie la fel de mari ca cele din studiu. Dacă valoarea p este mică, rezultatele studiului nu se datorează intâmplării și respingem ideea că nu există nicio diferență între cele doua eșantionane (respingem ipoteza nulului). Dacă valoarea p este mare, diferențele observate se datorează cel mai probabil intâmplării și nu vom respinge ideea că nu există diferențe între eșantioane.
+
+Valoarea p va fi utilizată deseori în această lucrare pentru a verifica corectitudinea respingerii ipotezelor enunțate de către mine.
+
+\subsection{Testul Z pentru compararea mediilor a două eșantioane cu varianțe inegale}
+
+Parametrul testului este
+\[
+z = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}},
+\]
+unde
+\begin{itemize}
+    \item $\bar{X_1}$ = media primului eșantion,
+    \item $n_1$ = volumul primului eșantion,
+    \item $s_1^2$ = varianța primului eșantion.
+\end{itemize}
+Idem pentru al doilea eșantion.
+Comparând acest z calculat cu valoarea z dintr-un tabel al valorii z normale, se determină în acest fel regiunea critică a testului (bilateral sau unilateral) și se acceptă sau respinge ipoteza nulului în funcție semnul de comparare dintre valoarea calculată și cea din tabel.
+
+\subsection{Testul Kologomorov-Smirnov}
+
+Este un test neparametric pentru testarea egalității a două funcții de distribuție care poate fi utilizat pentru a compara un eșantion cu funcție de distribuție de referință sau a compara două eșantioane a căror distribuție nu se cunoaște. În acest sens, mă voi folosi de acest test pentru a compara rezultatul unei generări de numere aleatoare care să urmeze o distribuție normală (de exemplu, functia $randn()$ din Matlab cu o distribuție normală cu aceeași parametri ca cei utilizați de distribuția dorită.
+
+Din păcate, documentația pentru acest test este cam slabă, și nu prea am reușit să găsesc o metodă implementă în vreun limbaj de programare, așa că acest test este singurul pentru care mă voi folosi de o implementare nefăcută de mine. Singurul motiv pentru care fac acest lucru este deoarece sunt absolut sigur că acest test este cel mai potrivit pentru cerințele mele.
+
+Parametrul testului pentru o funcție cumulativă de distribuție $F(x)$ este
+\[
+D_n = \sup_x |F_n(x) - F(x)|,
+\]
+unde $\sup_x$ este supremum-ul setului de distanțe. Intuitiv, statistica ia cea mai mare diferență în modul a celor două funcții de distribuție pentru toate valorile $x$.
+
 
