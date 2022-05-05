@@ -274,7 +274,7 @@ Fie $A$ un operator liniar pe un spațiu vectorial $V$. Atunci, există un unic 
 \[
     \braket{v|Aw} = \braket{A^\dagger v | w}.
 \]
-Operatorul liniar $A\dagger$ se numește operatorul adjunct al lui A (citit deseori și ca "dagger").
+Operatorul liniar $A^\dagger$ se numește operatorul adjunct al lui A (citit deseori și ca "dagger").
 În termeni matriceali, $A^\dagger = \overline{A^T}$, unde $\overline{A^T}$ reprezintă conjugata matricei A, transpuse.
 Pentru același $\ket{\psi}$ definit în prima subsecție a acestei secții, $\ket{\psi}^\dagger = \bra{\psi} = \overline{\ket{\psi}^T}$.
 
@@ -544,7 +544,7 @@ Așadar, între mașina Turing cuantică și cea clasică există următoarele c
     \item $I \rightarrow$ evoluțiile unitare în timp a stării cuantice $\ket{\psi} \in H_T$.
 \end{itemize}
 
-Mai departe, în această secțiune voi prezenta doar cele câteva porți logice cuantice utile pentru această lucrare, dar voi adăuga și altele într-o anexă, deoarece vor fi utilizate, implicit, în unele metode de generare de numere aleatoare cuantice pe care le voi analiza mai târziu. Atunci când voi utiliza un circuit cuantic a cărui componente sunt generate automat (cu varii porți logice cuantice), voi menționa acest lucru explicit.
+Mai departe, în această secțiune voi prezenta doar cele câteva porți logice cuantice utile pentru această lucrare, dar voi adăuga și altele într-o anexă, deoarece vor fi utilizate, implicit, în unele metode de generare de numere aleatorii cuantice pe care le voi analiza mai târziu. Atunci când voi utiliza un circuit cuantic a cărui componente sunt generate automat (cu varii porți logice cuantice), voi menționa acest lucru explicit.
 
 Circuitele logice cuantice sunt reprezentate sub forma unor diagrame care arată cam ca în felul următor:
 \begin{figure}[H]
@@ -590,7 +590,7 @@ Efectul porții Hadamard:
 \endminipage\hfill
 \end{figure}
 
-Așadar, cum amplitudinile cuantice $\alpha$ și $\beta$ din definiția qubitului sunt, după aplicarea porții Hadamard, amândouă $\frac{1}{\sqrt{2}}$, probabilitatea de obține fiecare dintre cele două stări, $\ket{0}, \ket{1}$ după măsurare este $(\frac{1}{\sqrt{2}})^2$, adică exact 1/2! Acest lucru practic trivializează conceptul fundamental a lucrării de față, adică acela de a realiza un generator de numere aleatoare folosind calculul cuantic, deoarece o simplă aplicare a porții Hadamard obține generarea unui număr cuantic exact uniform! Totuși, în capitolele următoare, voi realiza mai multe metode de generare a numerelor aleatoare cuantice și voi încerca să le demonstrez corectitudinea (adică, numerele generate sunt cu adevărat aleatoare) și să le măsor performanțele. În acest scop, pe lângă poarta Hadamard voi mai folosi următoarele porți:
+Așadar, cum amplitudinile cuantice $\alpha$ și $\beta$ din definiția qubitului sunt, după aplicarea porții Hadamard, amândouă $\frac{1}{\sqrt{2}}$, probabilitatea de obține fiecare dintre cele două stări, $\ket{0}, \ket{1}$ după măsurare este $(\frac{1}{\sqrt{2}})^2$, adică exact 1/2! Acest lucru practic trivializează conceptul fundamental a lucrării de față, adică acela de a realiza un generator de numere aleatorii folosind calculul cuantic, deoarece o simplă aplicare a porții Hadamard obține generarea unui număr cuantic exact uniform! Totuși, în capitolele următoare, voi realiza mai multe metode de generare a numerelor aleatorii cuantice și voi încerca să le demonstrez corectitudinea (adică, numerele generate sunt cu adevărat aleatorii) și să le măsura performanțele. În acest scop, pe lângă poarta Hadamard voi mai folosi următoarele porți:
 
 \begin{itemize}
     \item Poarta de rotație generică în jurul axei y Ry
@@ -614,7 +614,7 @@ Aceasta este o poartă logică parametrizată care reprezintă o rotație cu 3 u
 \[
 U3(\theta, \phi, \lambda) = RZ(\phi)RX(\phi/2)RZ(\theta)RX(\pi/2)RZ(\lambda),
 \]
-Unde $RX, RZ$ reprezintă porți generice de rotație în jurul axelor X, respectiv Z, similar cu poarta Ry descrisă anterior. De observat fapul că poarta U3 nu se folosește de o poartă Ry în descompunerea ei, motiv pentru care am analizat și performanța ei pentru generarea numerelor aleatoare. Reprezentarea matriceală a porții este următoarea:
+Unde $RX, RZ$ reprezintă porți generice de rotație în jurul axelor X, respectiv Z, similar cu poarta Ry descrisă anterior. De observat fapul că poarta U3 nu se folosește de o poartă Ry în descompunerea ei, motiv pentru care am analizat și performanța ei pentru generarea numerelor aleatorii. Reprezentarea matriceală a porții este următoarea:
 \[
 U3(\theta, \phi, \lambda) = \begin{bmatrix}
 \cos\frac{\theta}{2} && -e^{i\lambda} \sin \frac{\theta}{2} \\
@@ -624,7 +624,7 @@ e^{i\phi}\sin \frac{\theta}{2} && e^{i(\phi + \lambda)} \cos \frac{\theta}{2}
 
 \section{Teste statistice}
 
-Cum o mare parte din această lucrare se axează pe măsurarea performanțelor și corectitudinii mai multor metode de generare de numere aleatoare, mă voi utiliza de mai multe teste statistice pentru a verifica distribuțiile numerelor rezultate (voi testa uniformitatea numerelor generate în cazul scopului generării unei distribuții uniforme și normalitatea în cazul generării unei distribuții normale). Dar, înainte de a prezenta testele statistice, voi discuta câteva elemente de bază de statistică.
+Cum o mare parte din această lucrare se axează pe măsurarea performanțelor și corectitudinii mai multor metode de generare de numere aleatorii, mă voi utiliza de mai multe teste statistice pentru a verifica distribuțiile numerelor rezultate (voi testa uniformitatea numerelor generate în cazul scopului generării unei distribuții uniforme și normalitatea în cazul generării unei distribuții normale). Dar, înainte de a prezenta testele statistice, voi discuta câteva elemente de bază de statistică.
 
 \subsection{Testarea ipotezelor statistice}
 
@@ -672,7 +672,7 @@ Comparând acest z calculat cu valoarea z dintr-un tabel al valorii z normale, s
 
 \subsection{Testul Kologomorov-Smirnov}
 
-Este un test neparametric pentru testarea egalității a două funcții de distribuție care poate fi utilizat pentru a compara un eșantion cu funcție de distribuție de referință sau a compara două eșantioane a căror distribuție nu se cunoaște. În acest sens, mă voi folosi de acest test pentru a compara rezultatul unei generări de numere aleatoare care să urmeze o distribuție normală (de exemplu, functia $randn()$ din Matlab cu o distribuție normală cu aceeași parametri ca cei utilizați de distribuția dorită.
+Este un test neparametric pentru testarea egalității a două funcții de distribuție care poate fi utilizat pentru a compara un eșantion cu funcție de distribuție de referință sau a compara două eșantioane a căror distribuție nu se cunoaște. În acest sens, mă voi folosi de acest test pentru a compara rezultatul unei generări de numere aleatorii care să urmeze o distribuție normală (de exemplu, functia $randn()$ din Matlab) cu o distribuție normală cu aceeași parametri ca cei utilizați de distribuția dorită.
 
 Din păcate, documentația pentru acest test este cam slabă, și nu prea am reușit să găsesc o metodă implementă în vreun limbaj de programare, așa că acest test este singurul pentru care mă voi folosi de o implementare nefăcută de mine. Singurul motiv pentru care fac acest lucru este deoarece sunt absolut sigur că acest test este cel mai potrivit pentru cerințele mele.
 
@@ -682,4 +682,17 @@ D_n = \sup_x |F_n(x) - F(x)|,
 \]
 unde $\sup_x$ este supremum-ul setului de distanțe. Intuitiv, statistica ia cea mai mare diferență în modul a celor două funcții de distribuție pentru toate valorile $x$.
 
+
+\section{Specificațiile aplicației}
+
+Tot ce am prezentat până în acest moment sunt elemente teoretice necesare explicării corecte a specificațiilor aplicației mele. Prin urmare, scopul urmărit de mine este atât design-ul unor circuite cuantice care să poată fi implementate pe un calculator cuantic adevărat (codul va fi executat, într-o anumită etapă, și folosind un serviciu Cloud de quantum computing pentru a executa experimentele cuantice pe un calculator cuantic adevărat), cât și studiul corectitudinii generării numerelor, prin metode statistice descrise anterior, dar și măsurarea performanțelor multiplelor metode și circuite analizate, în diferite cazuri de utilizare. 
+Așadar, pe scurt, aplicațiile lucrării vor face următoarele:
+\begin{itemize}
+    \item Vor prezenta circuitele cuantice utilizate pentru generarea de o distribuție aleatorii uniformă și una normală;
+    \item Vor analiza corectitudinea generării acestor numere, prin metode statistice;
+    \item Vor analiza performanțele metodelor de generare;
+    \item Va exista și o aplicație cu interfață utilizator pentru expunerea funcționalițății analizate (dar nu neapărat și cele de analiză statistică etc.).
+\end{itemize}
+
+\todo[inline]{Vorbește de numere random cum a zis dom' petrila in mail}
 

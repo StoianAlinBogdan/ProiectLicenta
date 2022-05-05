@@ -9,6 +9,10 @@
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
 
+%figuri
+\usepackage{graphicx}
+%braket
+\usepackage{braket}
 %% geometria paginii
 \usepackage{geometry}
 %% setari antet/subsol
@@ -56,7 +60,11 @@
 %% PENTRU MODIFICARE SE EDITEAZA FISIERUL macros/student.tex
 \input{macros/student}
 
+\usepackage[nottoc]{tocbibind}
+\usepackage[unicode, hidelinks, colorlinks, linkcolor=black, urlcolor=blue, citecolor=black]{hyperref}
+
 \begin{document}
+\sloppy
 
 \input{macros/config_rapoarte_intermediare}
 
@@ -70,12 +78,12 @@
     \textbf{\thesistitle}
 \end{center}
 
-\textit{Student}: \textbf{\authornamefl}
+\textit{Student}: \textbf{\authornamelf}
 
 \textit{Coordonator științific}: \textbf{\coordinator}
 
 \vspace{0.5cm}
-
+\iffalse
 Al doilea raport trebuie să aibă minim 5-6 pagini și să conțină:
 
 \section*{Proiectarea hardware/software a aplicației}
@@ -100,6 +108,135 @@ Acest capitol nu trebuie să includă dificultăți din categoria „nu am găsi
 
 Acest capitol ar putea fi organizat și sub forma Problemă întâmpinată / Soluție aleasă.
 Ideal ar fi să fi identificat mai multe soluții posibile și ați ales, justificat, una dintre acestea pe baza unor argumente care țin de specificul temei alese, natura datelor prelucrate etc.
+\fi
+
+\section*{Proiectarea hardware/software a aplicației}
+
+În momentul scrierii acestui raport, majoritatea funcționalității de bază pentru aplicația de generare de numere și testarea lor este completă, inclusiv partea de execuție pe un calculator cuantic adevărat, pe Cloud (voi detalia mai târziu). Totuși, cum această aplicație (nu e cea cu interfață utilizator pe care o menționez în titlu) este sub forma unui Jupyter Notebook și un script Python separat, nu se poate discuta despre o anumită "proiectare" a vreunei aplicații. Voi prezenta, totuși, circuitele cuantice utilizate și voi detalia asptectele calculatorului cuantic pe care am executat codul meu, dar și metoda de interfațare cu acesta.
+
+\subsection*{Elemente hardware}
+
+Cum scopul lucrării este măsurarea de performanțe comparativ între mai multe metode de generare de numere aleatoare, din care unele sunt bazate strict pe simulare și executare pe calculatoare clasice, voi enumera aici componentele și sistemele de operare utilizate pe calculatoarele pe care am rulat metodele prezentate. Desigur, cum analiza este comparativă, nu contează foarte mult valorile absolute, ci cum sunt ele relativ față de celelalte.
+
+\vspace{0.5cm}
+\textbf{Laptop I} - Lenovo - Y520
+\begin{itemize}
+    \item Laptop cu sistemul de operare Windows
+    \item 8 GB RAM
+    \item CPU Intel i7-7700HQ @ 2.8 GHz, 8 cores
+    \item GPU NVidia GeForce GTX 1060 8 GB VRAM, 4 Shared RAM
+    \item HDD 1 TB
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Laptop II}  - Myria - MY8312SV
+\begin{itemize}
+    \item Laptop cu sistemul de operare Linux - Xubuntu
+    \item 4 GB RAM
+    \item CPU Intel Pentium N4200 @ 2.5 GHz, 4 cores
+    \item GPU Intel HD Graphics 505
+    \item SSD 256 GB
+\end{itemize}
+
+Calculatorul cuantic utilizat în executarea experimentelor este "ibmq\_bogota", un calculator cuantic dezvoltat și menținut de către IBM Labs, cu care voi interfața printr-un API Cloud, despre care voi discuta în secțiunea "software". Specificațiile calculatorului cuantic sunt următoarele:
+\begin{itemize}
+    \item 5 Qubiți
+    \item 32 Volum Cuantic
+    \item 2.3K CLOPS
+    \item Tip de procesor: Falcon r4L
+    \item Version: 1.6.37
+    \item Basis gates: CX, ID, RZ, SX, X
+\end{itemize}
+
+Explicațiile specificațiilor sunt următoarele:
+\begin{itemize}
+    \item Qubiți - Cantitatea de qubiți pe care o are disponibilă calculatorul cuantic; aceștia au o anumită configurație prezentă în figura \ref{fig:TopologieBogota}. Qubiții legați unii de ceilalți pot fi entangled sau se pot executa porți logice cuantice pe mai mulți qubiți între ei, fără a putea face acest lucru între qubiți care nu au conexiune între ei. Conexiunea este fizică și legată strict de design-ul calculatorului cuantic.
+    \item Volum Cuantic - O unitate de măsură care reprezintă "dimensiunea" maximă a unui circuit cuantic care poate fi executat de un calculator cuantic. De exemplu, dacă un calculator cuantic cu 8 qubiți poate executa un circuit în care se vor afla maxim 8 stări $\ket{\psi}$ intermediare, atunci spunem că acel calculator are un Volum Cuantic de 256. Prin urmare, volumul cuantic este o specificație de performanță independentă de hardware-ul abstractizat.
+    \item CLOPS - Circuit Layer Operations Per Second - Câte straturi de volum cuantic pot fi executate de un QPU (Quantum Processing Unit) într-o unitate de timp. Documentația de la IBM \cite{misc:web:DocumentatieIBMQ} recomandă lectura lucrării \cite{misc:paper:QSS:WackAndrewEtAl} pentru a înțelege conceptul mai bine.
+    \item Tipul de procesor: Există o mare varietate de QPU-uri dezvoltate, atât de către IBM, cât și de către alte firme. Familia de procesoare \textit{Falcon} cu seria r4 sunt o platformă pentru circuite de medii dimensiuni, iar calculatorul IBMQ\_Bogota este unul disponibil public, gratuit, prin API-ul cloud de la IBM Quantum Cloud.
+    \item Versiunea: versiunea procesorului în ansamblu.
+    \item Basis gates: porțile compatibile cu QPU-ul dat. Orice circuit care folosește alte porți trebuie \textit{transpilat}, adică trebuiesc descompuse toate celelalte porți în aceste porți pentru a putea fi executat. Qiskit, framework-ul pentru calcul cuantic de la IBM, permite transpilarea automată a oricăror circuite în circuite compatibile cu calculatoarele cuantice disponibile public.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{anexe/figuri/TopologieBogota.png}
+    \caption{Topologia fizică a calculatorului cuantic \textit{IBMQ\_Bogota} }
+    \label{fig:TopologieBogota}
+\end{figure}
+\pagebreak
+\subsection*{Elemente Software}
+
+Cum am mai spus, în momentul de față doar aplicația pentru design-ul circuitelor și a testării corectitudinii generării de numere aleatoare, împreună cu câteva elemente de măsură de performanță sunt realizate. Cum acestea sunt făcute sub forma unui Jupyter Notebook, respectiv a unui script Python, nu se poate pune problema unei "proiectări" propriu-zise a vreunei aplicații. Voi prezenta totuși circuitele realizate de mine și cele luate gata făcute din bibliotecile Qiskit\_finance, framework despre care am discutat în raportul precedent.
+
+\vspace{0.5cm}
+\textbf{Cel mai simplu circuit}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.80]{anexe/figuri/CircuitHadamard1.png}
+    \caption{Un circuit simplu, cu o singură poartă Hadamard, cu scopul de a genera numere pe 8 biți, pe o distribuție uniformă, bit cu bit}
+    \label{fig:CircuitHadamard1}
+\end{figure}
+
+\textbf{Variație pentru primul circuit}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.80]{anexe/figuri/CircuitRy1.png}
+    \caption{Aceeași logică ca și pentru primul circuit}
+    \label{fig:CircuitRy1}
+\end{figure}
+
+\textbf{Variante cu 8 qubiți pentru primele circuite} - Generază numerele imediat, fără a mai fi nevoie de concatenare, dar folosesc mai mulți qubiți și necesită mai multă executare la nivel fizic.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.80]{anexe/figuri/Variante8Qubiti.png}
+    \caption{Varianta cu 8 qubiți}
+    \label{fig:Varianta8Qubiti}
+\end{figure}
+
+\textbf{Circuitul pentru distribuție uniformă} - De menționat că folosesc modului Initialize din Qiskit, dându-i ca argument radicalul unei distribuții normale pseudoaleatoare generată cu scipy.stats.multivariate\_normal.pdf(), normalizată. Așadar, nu știu cum se realizează circuitul la nivelul porților logice, framework-ul ocupându-se de modelarea acestuia și pretarea pe probabilitățile date de mine!
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{anexe/figuri/CircuitNormalEu.png}
+    \caption{Circuitul asamblat de Initialize(), cu module de porți logice}
+    \label{fig:CircuitNormalEu}
+\end{figure}
+\pagebreak
+\subsection*{Rezultate intermediare}
+Toate circuitele prezentate au fost executate prin simulare, dar numai unele au fost executate și pe un calculator cuantic adevărat. Am realizat și verificarea aleatorității folosind teste statistice, și am și unele măsurători de performanță. Acestea sunt:
+
+\textbf{Circuit uniform, 8 biți, porți Hadamard} - dataframe asociat rezultatelor și vizualizarea distribuției
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{anexe/figuri/Uniform8BitiEu.png}
+    \caption{}
+    \label{fig:Uniform8BitiEu}
+\end{figure}
+
+\textbf{Rezultat test statistic}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{anexe/figuri/TestZ8bitiHadamard.png}
+    \caption{}
+    \label{fig:TestZ8BitiHadamard}
+\end{figure}
+Rezultatele sunt < z critic, cu un factor p suficient de mic pentru a respinge ipoteza nulului ("distribuția dată nu are aceeași distribuție cu o distribuție știută drept uniformă")
+
+\textbf{Circuit normal, 8 biți, inițializat de mine} - dataframe asociat rezultatelor și vizualizarea distribuției
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{anexe/figuri/Normal8BitiEu.png}
+    \caption{}
+    \label{fig:RezultatNormal8BitiEu}
+\end{figure}
+
+
+
 
 % *************** referinte bibliografice ***************
 \nopagebreak
