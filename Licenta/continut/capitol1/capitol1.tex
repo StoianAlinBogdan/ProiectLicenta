@@ -684,7 +684,8 @@ unde $\sup_x$ este supremum-ul setului de distanțe. Intuitiv, statistica ia cea
 
 \pagebreak
 
-\section{Numerele aleatorii și proprietățile lor}
+\section{Numerele aleatorii, generatorarele de numere pseudoaleatorii și proprietățile lor}
+\subsection{Definiția numerelor aleatorii și teste de aleatoritate}
 Un număr aleator este un număr generat printr-o metodă oarecare care face parte dintr-un set care prezintă \textit{aleatoritate statistică}. O secvență de numere poate fi numită drept \textit{aleatorii} din punct de vedere statistic dacă nu urmează un anumit tipar sau șablon și nu prezintă regularități sau periodicitate. De exemplu, variabila rezultată prin aruncarea unui zar netrucat și memorizarea rezultatelor se poate numi drept aleatorii statistic. 
 
 M.G. Kendall și B. Babington Smith prezintă în \cite{MGKendallBBSmithRandomness}
@@ -703,6 +704,23 @@ Aceste teste propuse sunt:
 \end{itemize}
 
 Pe lângă testele statistice bazate pe ipoteză descrise anterior, mă voi folosi și de aceste teste frecventiste, în special datorită ușurinței de prezentare a unor vizualizări utile pentru acestea (adică, voi arăta și distribuția numerelor generate, pentru testul de frecvență, de exemplu).
+
+\subsection{Alte proprietăți ale generatoarelor de numere pseudoaleatorii}
+
+Patru proprietăți esențiale ale numerelor aleatorii sunt:
+\begin{itemize}
+    \item Repetabilitate: în aceleași condiții de generare, un generator ar trebui să producă același set de numere. Altfel spus, generatoarele de numere pseudoaleatorii trebuie să producă același set de numere pentru un seed inițial anume;
+    \item Aleatoritate: generatorul trebuie să treacă cel puțin testele descrise anterior, dar sunt mult mai multe teste de aleatoritate;
+    \item O perioadă lungă: secvențele de numere pseudoaleatorii se folosesc de aritmetică cu precizie finită, deci secvența trebuie să se repete cu o perioadă finită. Această perioadă trebuie să fie cu mult mai mare față de numărul de numere necesar pentru un experiment dat;
+    \item Lipsa de sensibilitate față de seed: proprietățile de aleatoritate ale generatorului nu ar trebui să depindă de seed-ul acestuia.
+\end{itemize}
+
+\subsection{Entropia}
+
+Entropia este o unitate de măsură a incertitudinii unui sistem. O entropie bună provine din mediul înconjurător al sistemului și este reprezentat de lipsa predictibilității și, în general, de haos. Un HRNG (Hardware Random Number Generator) se folosește de valori greu de ghicit, precum măsurători de presiune atmosferică sau valori de viteză a vântului, dar în cazul sistemelor de calcul se folosesc deseori fenomene haotice și imprevizibile, precum mișcarea cursorului, tastele apăsate de un utilizator, dar și viteze de scriere a disk-ului sau viteze de transfer prin rețea. 
+
+Începând cu anul 2012, procesoarele intel care folosesc arhitectura Ivy Bridge sau mai nou conțin un HRNG bazat pe guideline-urile NIST SP 800-90 \footnote{https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final}. Intel oferă instrucțiuni la nivelul limbajului de asamblare, dar pe sistemele de operare Linux se poate interacționa cu circuitul HRNG prin intermediul dispozitivului /dev/hwrng. 
+
 
 \subsection{Metode clasice de generare a numerelor aleatorii}
 
