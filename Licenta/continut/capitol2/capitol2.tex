@@ -201,8 +201,41 @@ Limbajul de programare Python este un limbaj de scripting multiparadigmă high-l
 Cu apariția necesității unui limbaj de programare pentru calculatoarele cuantice în trecutul recent, mai multe limbaje de programare au fost dezvoltate specific în acest scop, deseori bazate pe limbaje deja existente, cum ar fi limbajul de programare Q\# dezvoltat de Microsoft, care are ca sursă de inspirație limbajul de programare C\#, QCL (Quantum Computation Language), dezvoltat de Institutul pentru Fizică Teoretică, parte a Universității din Viena, una dintre primele limbaje dezvoltate specific pentru programarea calculatoarelor cuantice, cu sintaxă și funcționalitate foarte similară cu cea a limbajului de programare C, QASM sau OpenQASM, limbajul de nivel mijlociu (intermediar) pentru interfațarea cu calculatoarele cuantice de la IBM, limbaj care stă la baza framework-ului ales de mine, și anume Qiskit, dezvoltat în limbajul de programare Python.
 
 Motivul pentru care am ales limbajul Python, împreună cu framework-ul Qiskit, este în mare parte datorită propriei familiarități cu limbajul de programare, fiind una dintre primele limbaje pe care le-am învățat, dar și mulțumită faptului că IBM oferă o gamă destul de largă de calculatoare cuantice pentru interfațare prin API-ul lor. Cum framework-ul dezvoltat specific pentru calculatoarelele lor este Qiskit, framework pentru limbajul Python, interesele s-au aliniat și au contribuit în foarte mare parte la alegerea mea a limbajului. 
-Pe lângă aceste lucruri, având în vedere proficiența mea în limbajul de programare, alegând-ul, îl pot folosi în toate nivelurile aplicațiilor mele, de la definirea și executarea circuitelor cuantice, la prelucrarea rezultatelor și analiza statistică a acestora, dar și la dezvoltarea aplicației cu interfață utilizator din ultima parte a proiectului. 
+Pe lângă aceste lucruri, având în vedere proficiența mea în limbajul de programare, alegând-ul, îl pot folosi în toate nivelurile aplicațiilor mele, de la definirea și executarea circuitelor cuantice, la prelucrarea rezultatelor și analiza statistică a acestora, dar și la dezvoltarea aplicației cu interfață utilizator din ultima parte a proiectului. Astfel, se realizează și o anumită consecvență în comparațiile măsurilor de performanță, deoarece ar avea puțin sens a compara rezultate de performanță folosind limbaje de programare diferite și tehnologii diferite, în scopul dorit de mine.
 
 \subsection{Framework-ul Qiskit}
 
+Qiskit, pronunțat [quiss'kit] este un SDK (Software Development Kit) open source menținut și dezvoltat în mare parte de IBM Research împreună cu o mare comunitate de dezvoltatori. 
 
+SDK-ul are rolul de a oferi o modalitate de interacționare cu calculatoarele cuantice la nivelul circuitelor cuantice, a pulsurilor și a algoritmilor. Conține unelte pentru manipularea și creearea de programe cuantice și executarea acestora pe pe dispozitive cuantice adevărate prin intermediul IBM Quantum Experience sau prin intermediul simulatoarelor locale, care sunt oferite tot de către SDK. Totuși, poate fi folosit, teoretic, pentru orice dispozitiv cuantic care urmează modelul circuitului pentru calcul cuantic, adică modelul prezentat de mine în primul capitol. 
+
+Qiskit este format din mai multe subcomponente, din care voi enumera câteva, pe care le voi utiliza și eu, ori explicit, ori implicit.
+
+\subsubsection{Qiskit Terra}
+
+Terra este componenta de bază a SDK-ului. Qiskit Terra permite programatorului creearea de circuite cuantice, adăugarea de porți cuantice, dar și elemente de transpilare și optimizare pentru a face oricare circuit cuantic dat să fie compatibil cu un dispozitiv cuantic țintă. De exemplu, cum am explicat anterior, voi folosi calculatorul cuantic IBMQ\_Bogota, care permite executarea circuitelor care conțin doar porțile CX, ID, RZ, SX și X, iar dacă eu voi folosi o poartă H, de exemplu, voi transpila circuitul meu în forma lui descompusă folosind funcții din Qiskit Terra.
+
+\subsubsection{Qiskit Aer}
+
+Aer este componenta de simulare a SDK-ului Qiskit. Acest framework permite simularea circuitelor cuantice cu modele de zgomot realistice. Prin intermediului Aer, se pot executa circuite cu orice număr de qubiți local, sau prin utilizarea de simulatoare HPC (High Performance Computing) aflate în Cloud. Simulatoarele oferite pot simula efecte de zgomot de la cele mai simple până la cele mai complicate modele de zgomot. Conceptul de "zgomot" în cazul calculului cuantic nu va mai fi explicat în această lucrare, deoarece ține de Informația Cuantică, o categorie aparte în lumea calculului cuantic, care ar necesita mult prea mult efort pentru cantitatea ei de relevanță pentru această lucrare. 
+
+Voi folosi în tandem simulatoare din Aer și execuția pe calculatoare cuantice adevărate prin cloud pe parcursul acestei lucrări. 
+
+\subsubsection{Qiskit Finance}
+
+În versiunea 0.9.0 a Qiskit, din 2 Aprilie 2021, Qiskit Aqua a fost depreciat și descompus în mai multe alte framework-uri, printre care și Qiskit Finance. Qiskit Finance conține componente de incertitudine pentru stocuri și alte acțiuni pe bursă, dar printre altele conține și circuite și algoritmi gata pregătiți pentru generarea de anumite distribuții de numere aleatorii. Prin urmare, din Finance mă voi utiliza de metodele gata implementate pentru generarea de o distribuție uniformă și una normală, urmând să compar aceste circuite cu cele realizate manual de către mine.
+
+\subsection{Jupyter Notebook}
+
+Jupyter Notebook este o platformă pentru calcul interactiv bazat pe web. Este o parte din proiectul Jupyter, numit astfel pentru cele trei limbaje de programare pentru care a fost inițial dezvoltat (Julia, Python și R), care conține o multitudine de alte unele prin intermediul Jupyter Lab. Totuși, eu nu voi folosi o mare parte dintre uneltele puse la dispoziție de către proiectul Jupyter, ci voi folosi doar elementele de Jupyter Notebook.
+
+Jupyter Notebook reprezintă platforma pentru creearea de documente stil "notebook" și executarea de cod într-un mod interactiv. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{continut/capitol2/figuri/JupyterNotebookInterface.png}
+    \caption{O captură de ecran cu interfața Jupyter Notebook. Sursa: Wikipedia}
+    \label{fig:JupyterNotebookInterface}
+\end{figure}
+
+SDK-ul Qiskit prezentat anterior conține și o multitudine de notebook-uri Jupyter pregătite pentru a demonstra capabilitățile framework-ului, dar și care conține exerciții de rezolvat pentru cei care învață să îl folosească. Așadar, decizia de a folosi Jupyter Notebook în cadrul astei lucrări a fost una naturală pentru mine.

@@ -682,6 +682,92 @@ D_n = \sup_x |F_n(x) - F(x)|,
 \]
 unde $\sup_x$ este supremum-ul setului de distanțe. Intuitiv, statistica ia cea mai mare diferență în modul a celor două funcții de distribuție pentru toate valorile $x$.
 
+\pagebreak
+
+\section{Numerele aleatorii și proprietățile lor}
+Un număr aleator este un număr generat printr-o metodă oarecare care face parte dintr-un set care prezintă \textit{aleatoritate statistică}. O secvență de numere poate fi numită drept \textit{aleatorii} din punct de vedere statistic dacă nu urmează un anumit tipar sau șablon și nu prezintă regularități sau periodicitate. De exemplu, variabila rezultată prin aruncarea unui zar netrucat și memorizarea rezultatelor se poate numi drept aleatorii statistic. 
+
+M.G. Kendall și B. Babington Smith prezintă în \cite{MGKendallBBSmithRandomness}
+conceptele de numere \textit{local} aleatorii, în contrast cu conceptul de numere \textit{global} aleatorii. Un set de numere este "global" aleator dacă pentru o cantitate suficientă de numere secvența pare a fi aleatorii, chiar dacă anumite subsecvențe nu par a fi deloc aleatorii. De exemplu, într-un set suficient de mare de numere aleatorii, pot apărea secvențe lungi de același număr, acest lucru nedescalificând setul de la proprietatea de "aleatoritate". Un set de numere este "local" aleator dacă există o secvență de lungime minimă prin care distribuția este aproximată. Practic, un set de numere este local aleator dacă nu prezintă proprietățile descrise pentru numerele global aleatorii. 
+
+Aceste lucruri sunt relevante deoarece există, de exemplu, regulații în industria jocurilor de noroc care interzic existența de subsecvențe lungi de același număr generat de o mașinărie, lucru care implică necesitatea existenței aleatorității locale.
+
+Kendall și Smith prezintă patru teste bazate pe ipoteză cu ipoteza nulului fiind că toate numerele într-o secvență aleatorie au o probabilitate egală de a apărea, și că mai multe alte șabloane din setul de date ar trebui să fie, de asemenea, echiprobabile.
+
+Aceste teste propuse sunt:
+\begin{itemize}
+    \item Testul de frecvență - Un test foarte simplu, pe care îl voi folosi excesiv pe parcursul lucrării, și anume verificarea că numerele dintr-o secvență de date apar cu probabilitate aproximativ urmând o distribuție dată (în cazul meu, o distribuție uniformă sau una normală);
+    \item Testul serial - Un test similar cu cel de frecvență, dar care folosește perechi de câte două numere pentru a verifica urmărirea unei distribuții de către secvența de date;
+    \item Testul "poker" - Testează secvențe de câte cinci numere odată, similar cu testarea pentru o mână de poker;
+    \item Testul "gap" sau de interval - Testează, în lucrarea autorilor, intervalul dintre oricare două zero-uri, dar se poate generaliza pentru intervalul dintre oricare două numere din universul numerelor posibile de generat.
+\end{itemize}
+
+Pe lângă testele statistice bazate pe ipoteză descrise anterior, mă voi folosi și de aceste teste frecventiste, în special datorită ușurinței de prezentare a unor vizualizări utile pentru acestea (adică, voi arăta și distribuția numerelor generate, pentru testul de frecvență, de exemplu).
+
+\subsection{Metode clasice de generare a numerelor aleatorii}
+
+\subsubsection{Metoda LCG}
+
+Metoda LCG (Linear Congruential Generator) este un algoritm care produce o secvență de numere pseudoaleatorii calculată cu o ecuație liniară pe porțiuni. Metoda este unul dintre cei mai vechi și utilizați algoritmi de generare de numere pseudoaleatorii. Motivația popularității metodei este utilizarea de instrucțiuni ușor de implementat și utilizat de către sistemele de calcul. 
+
+Generatorul este definit de funcția de recurență 
+\[
+X_{n+1} = (aX_n + c) \enspace mod \enspace m
+\]
+unde $X$ este secvența de numere pseudoaleatorii, $m$ este "coeficientul" sau "modulus"-ul, $a$ este înmuțitorul, $c$ este "increment"-ul iar $X_0$ este "seed"-ul sau valoarea de start a generatorului. Pentru o valoare $c = 0$, generatorul poate fi numit de fapt Multiplicative Congruential Generator (MCG). Teoretic, pentru un $c \neq 0$, funcția de recurență ar trebui defapt denumită "transformare afină" și nu "liniară", dar se păstrează denumirea de "liniară" din motive istorice.
+
+Un beneficiu principal a metodei LCG este faptul că, pentru niște parametri aleși corespunzător, se pot obține valori de periodicitate foarte mari și periodicitatea rămâne cunoscută. 
+
+Specific, în aplicația mea, voi folosi un LCG care îndeplinește cerințele teoremei Hull-Dobell, enunțată în \cite{HullDobellRNGs}, cerințele acestei teoreme fiind:
+\begin{itemize}
+    \item $m$ și $c$ sunt numere coprime;
+    \item $a-1$ este divizibilă cu toți factorii primi ai lui $m$;
+    \item $a-1$ este divizibilă cu 4 dacă $m$ este divizibil cu 4.
+\end{itemize}
+
+Îndeplinirea cerințelor teoremei Hull-Dobell asigură faptul că generatorul va avea perioada maximă posibilă, egală cu $m$, indiferent de valoarea de start (seed-ul). 
+
+
+Pentru următoarele câteva generatoare pe care le voi prezenta nu există multă documentație datorită publicării acestora original pe newsgroup-uri de usenet, între anii 1996 și 2011, de către autorul George Marsaglia \cite{misc:usenet:GeorgeMarsaglia}. Pentru generatoarele CONG, SHR3 și MWC, voi prezenta doar formulele lor de calcul. 
+
+\subsubsection{Generatorul CONG}
+
+Pentru generatorul CONG (Congruential Generator), se folosește relația de recurență
+\[
+X_{n+1} = 69069 \cdot X_{n} + 1234567.
+\]
+Valorile pentru înmulțitor și increment, anume 69069 și 1234567 au fost alese de către George Marsaglia. Aparent înmulțitorul de 69069 era foarte popular în 1996. Generatorul are o perioadă de $2^{32}$. Autorul spune că deși primii 16 biți trec cu brio testele de aleatoritate, ultimii 16 sunt "prea regulați". Autorul sugerează utilizarea generatorului CONG (care deja era utilizat pe sistemele Delphi) împreună cu un alt generator.
+
+\subsubsection{Generatorul MWC}
+
+Pentru generatorul MWC (Multiply With Carry) se concatenează două numere pe 16 biți cu relațiile de recurență
+\[
+X_n = 36969 \cdot X_{n-1} + carry, 
+\]
+\[
+Y_n = 18000 \cdot Y_{n-1} + carry
+\],
+totul modulo $2^{32}$. Are o perioadă de $2^{60}$ și aparent era un preferat în industrie la momentul scrierii.
+
+\subsubsection{Generatorul SHR3}
+
+Pentru generatorul SHR3 (3 Shift Register Generator), se folosește relația 
+\[
+Y_n = Y_{n-1} (I + L ˆ 17) (I + R ˆ 13) (I + L ˆ 5) 
+\]
+, unde "\textasciicircum" reprezintă operația XOR pe biți. Pentru valorile pentru I, L și R voi folosi valorile din implementarea oferită de autor.
+
+\subsubsection{Generatorul KISS}
+
+Generatorul KISS (Keep It Simple, Stupid, sau, cenzurat, "Sir") se folosește de toate celelalte generatoare de numere pseudoaletorii prezentate până acum (CONG, MWC și SHR3) în felul următor:
+\begin{figure}[H]
+    \centering
+    \includegraphics{continut/capitol1/figuri/KissDiagram.png}
+    \caption{Diagrama logică a generatorului KISS}
+    \label{fig:GeneratorKissDiagrama}
+\end{figure}
+
+Blocurile "znew" și "wnew" reprezintă de fapt numerele I, L și R prezentate anterior. Are o perioadă de $2^{123}$ și este una dintre preferatele autorului, deși între timp s-au descoperit mai multe probleme cu acest generator \cite{KISSABitTooSimple}. Totuși, pe acesta îl voi implementa și eu, pentru a realiza mai multe teste pe numere pseudoaleatorii. Figură preluată din \cite{KISSABitTooSimple}.
 
 \section{Specificațiile aplicației}
 
@@ -694,5 +780,6 @@ Așadar, pe scurt, aplicațiile lucrării vor face următoarele:
     \item Va exista și o aplicație cu interfață utilizator pentru expunerea funcționalițății analizate (dar nu neapărat și cele de analiză statistică etc.).
 \end{itemize}
 
-\todo[inline]{Vorbește de numere random cum a zis dom' petrila in mail}
+
+
 
