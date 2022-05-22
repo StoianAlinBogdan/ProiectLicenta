@@ -21,13 +21,13 @@ def CONG():
 
 def znew():
     global z
-    z = (36969 * (z and 65536) + (z >> 16) )% (2 ** 32) # sau 16?
+    z = (36969 * (z and 65536) + (z >> 16) )% (2 ** 16) # sau 16?
     return z
     
 
 def wnew():
     global w 
-    w = (18000 * (w and 65535) + (w >> 16) )% (2 ** 32) # sau 16?
+    w = (18000 * (w and 65535) + (w >> 16) )% (2 ** 16) # sau 16?
     return w
     
 
