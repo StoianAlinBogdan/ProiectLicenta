@@ -50,6 +50,7 @@ class QRNG:
                 temp = ''
                 c = 0
         numbers = [int(x, 2) for x in numbers]
+        return numbers
 
     
     #@profile
@@ -58,6 +59,7 @@ class QRNG:
         result = self.sim.run(qc, shots=800000, memory=True).result()
         memory = result.get_memory()
         numbers = self.concatenate_bits(memory)
+        return numbers
 
     #@profile
     def run_Hadamard_8bit(self):
@@ -66,32 +68,37 @@ class QRNG:
         memory = result.get_memory()
         for i in range(len(memory)):
             memory[i] = int(memory[i], 2)
+        return memory
 
     def run_RY_1bit(self):
         qc = self.QRNGs.pop(0)
         result = self.sim.run(qc, shots=800000, memory=True).result()
         memory = result.get_memory()
         numbers = self.concatenate_bits(memory)
+        return numbers
     
     def run_RY_8bit(self):
         qc = self.QRNGs.pop(0)
         result = self.sim.run(qc, shots=100000, memory=True).result()
         memory = result.get_memory()
         for i in range(len(memory)):
-            memory[i] = int(memory[i], 2)     
+            memory[i] = int(memory[i], 2) 
+        return memory    
 
     def run_Uniform_1bit(self):
         qc = self.QRNGs.pop(0)
         result = self.sim.run(qc, shots=800000, memory=True).result()
         memory = result.get_memory()
         numbers = self.concatenate_bits(memory)
+        return numbers
 
     def run_Uniform_8bit(self):
         qc = self.QRNGs.pop(0)
         result = self.sim.run(qc, shots=100000, memory=True).result()
         memory = result.get_memory()
         for i in range(len(memory)):
-            memory[i] = int(memory[i], 2)      
+            memory[i] = int(memory[i], 2)
+        return memory      
 
 
 class PRNG():
@@ -127,6 +134,7 @@ class PRNG():
             self.w = ((18000 * (self.w & 65535)) % 2 ** 16 + (self.w >> 16) ) % 2 ** 16
             mwc = ((self.z << 16) + self.w) % self.m
             numbers.append(mwc)
+        return numbers
         
 
         
