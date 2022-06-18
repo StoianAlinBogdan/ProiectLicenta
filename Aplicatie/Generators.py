@@ -1,7 +1,14 @@
 from qiskit import Aer, QuantumCircuit, transpile
 from qiskit_finance.circuit.library import UniformDistribution
 import math
+import numpy as np
 
+def Box_Muller(u1, u2):
+    u1 = np.array(u1)
+    u2 = np.array(u2)
+    z1 = np.sqrt(-2 * np.log(u1)) * np.cos(2 * math.pi * u2)
+    z2 = np.sqrt(-2 * np.log(u1)) * np.sin(2 * math.pi * u2)
+    return (z1, z2)
 
 class QRNG:
     def __init__(self):
@@ -29,6 +36,14 @@ class QRNG:
             'RY8Bit': self.QC_RY_8bit,
             'Uniform1Bit': self.QC_Uniform_1bit,
             'Uniform8Bit': self.QC_Uniform_8bit
+        }
+        self.function_map = {
+            'Hadamard1Bit': 'run_Hadamard_1bit',
+            'Hadamard8Bit': 'run_Hadamard_8bit',
+            'RY1Bit': 'run_RY_1bit',
+            'RY8Bit': 'run_RY_8bit',
+            'Uniform1Bit': 'run_Uniform_1bit',
+            'Uniform8Bit': 'run_Uniform_8bit'
         }
 
     def concatenate_bits(self, memory):
@@ -90,3 +105,48 @@ class QRNG:
         for i in range(len(memory)):
             memory[i] = int(memory[i], 2)
         return memory  
+
+
+class PRNG:
+    def __init__(self):
+        self.LCG_rand = 6969
+        self.LCG_a = 1664525
+        self.LCG_c = 1013904223
+        self.m = 2 ** 32
+        self.jsr = 123456789
+        self.jcong = 380116160
+        self.z = 362436069
+        self.w = 521288629
+
+        self.generators = ['LCG', 'KISS']
+        self.function_map = {
+            'LCG': 'run_LCG',
+            'KISS': 'run_KISS'
+        }
+
+    def run_LCG(self, shots):
+        numbers = []
+        for i in range(shots):
+            self.LCG_rand =  (self.LCG_a * self.LCG_rand + self.LCG_c) % self.m
+            numbers.append(self.LCG_rand)
+        maxim = max(numbers)
+        numbers = [round((i / maxim)*255) for i in numbers]
+        return numbers
+    
+    def run_KISS(self, shots):
+        numbers = []
+        for i in range(shots):
+            #SHR3
+            self.jsr = (self.jsr ^ ((self.jsr << 17) % self.m)) % self.m
+            self.jsr = (self.jsr ^ ((self.jsr >> 13 ) % self.m)) % self.m
+            self.jsr = (self.jsr ^ ((self.jsr << 5) % self.m)) % self.m
+            #CONG
+            self.jcong = ((69069 * self.jcong) % self.m + 1234567) % self.m
+            #MWC
+            self.z = ((36969 * (self.z & 65535)) % 2 ** 16 + (self.z >> 16) ) % 2 ** 16
+            self.w = ((18000 * (self.w & 65535)) % 2 ** 16 + (self.w >> 16) ) % 2 ** 16
+            mwc = ((self.z << 16) + self.w) % self.m
+            numbers.append(mwc)
+        maxim = max(numbers)
+        numbers = [round((i / maxim)*255) for i in numbers]
+        return numbers

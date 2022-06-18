@@ -3,6 +3,7 @@ import Generators as gen
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import subprocess
+import itertools
 
 _VARS = {
     'window': False,
@@ -10,14 +11,6 @@ _VARS = {
     'plt_fig': False
     }
 
-function_map = {
-    'Hadamard1Bit': 'run_Hadamard_1bit',
-    'Hadamard8Bit': 'run_Hadamard_8bit',
-    'RY1Bit': 'run_RY_1bit',
-    'RY8Bit': 'run_RY_8bit',
-    'Uniform1Bit': 'run_Uniform_1bit',
-    'Uniform8Bit': 'run_Uniform_8bit'
-}
 
 def draw_figure(canvas, figure) -> None:
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
@@ -67,10 +60,11 @@ if __name__ == "__main__":
     AppFont = 'Any 16'
 
     qrngs = gen.QRNG()
+    prngs = gen.PRNG()
 
     left_part = [
         [
-            sg.Listbox(values=[x for x in qrngs.QRNGs.keys()], key='-LISTBOX-', size=(30,None), expand_x=True, expand_y=True, enable_events=True)
+            sg.Listbox(values=list(itertools.chain(*[[x for x in qrngs.QRNGs.keys()], [x for x in prngs.generators]])), key='-LISTBOX-', size=(30,None), expand_x=True, expand_y=True, enable_events=True)
         ]
     ]
     right_part = [
@@ -80,7 +74,11 @@ if __name__ == "__main__":
         [
             sg.Text("Amount of numbers: "), sg.Input(key='-NUMS-'), sg.Button('Generate', disabled=True, key='-GENERATE_BUTTON-'),
             sg.Button('Get Numbers', disabled=True, key='-NUMBERS_BUTTON-')
+        ],
+        [
+            sg.Button('Run Box-Muller', disabled=True, key='-BOX-MULLER_BUTTON-')
         ]
+        
     ]
 
     menu_def = [['&Mode',  ['Simulated', 'Real']], ['&Help']]
@@ -111,14 +109,26 @@ if __name__ == "__main__":
             generator_string = values['-LISTBOX-'][0]
         if event == '-GENERATE_BUTTON-':
             _VARS['window']['-NUMBERS_BUTTON-'].update(disabled=False)
-            RNG = getattr(qrngs, function_map[generator_string])
-            nums = RNG(int(values['-NUMS-']))
+            if generator_string in qrngs.QRNGs.keys():
+                RNG = getattr(qrngs, qrngs.function_map[generator_string])
+                nums = RNG(int(values['-NUMS-']))
+                _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
+            else:
+                RNG = getattr(prngs, prngs.function_map[generator_string])
+                nums = RNG(int(values['-NUMS-']))
+                _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
             if _VARS['plt_fig'] == False:
                 draw_chart(nums)
             else:
                 update_chart(nums)
+        if event == '-BOX-MULLER_BUTTON-':
+            nums_1, nums_2 = gen.Box_Muller(nums[0:len(nums)//2], nums[len(nums)//2:len(nums)])
+            if _VARS['plt_fig'] == False:
+                draw_chart(nums_1)
+            else:
+                update_chart(nums_1)
         if event == '-NUMBERS_BUTTON-':
-            _VARS['numbers_window'] = make_numbers_window()
+            _VARS['numbers_window'] = make_numbers_window() 
             _VARS['numbers_window']['-NUMBERS_BOX-'].print(nums[0:len(nums)//100])
             wrote = False
             disabled_button = False
