@@ -121,14 +121,17 @@ if __name__ == "__main__":
                 draw_chart(nums)
             else:
                 update_chart(nums)
+            ran_box_muller = 0
         if event == '-BOX-MULLER_BUTTON-':
             nums_1, nums_2 = gen.Box_Muller(nums[0:len(nums)//2], nums[len(nums)//2:len(nums)])
+            nums = list(itertools.chain(*[[x for x in nums_1], [x for x in nums_2]]))
             if _VARS['plt_fig'] == False:
-                draw_chart(nums_1)
+                draw_chart(nums)
             else:
-                update_chart(nums_1)
+                update_chart(nums)
         if event == '-NUMBERS_BUTTON-':
             _VARS['numbers_window'] = make_numbers_window() 
+
             _VARS['numbers_window']['-NUMBERS_BOX-'].print(nums[0:len(nums)//100])
             wrote = False
             disabled_button = False
