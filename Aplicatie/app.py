@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import subprocess
 import itertools
+from PIL import ImageTk, Image
+from os import remove
+from Helpers import generate_descriptive_stats
 
 _VARS = {
     'window': False,
@@ -50,6 +53,14 @@ def make_numbers_window():
          sg.Button("Copy to clipboard", key='-CLIPBOARD_COPY_BUTTON-')]
     ]
     return sg.Window('Numbers window', layout, finalize=True)
+
+
+def make_circuit_window():
+    layout = [
+        [sg.Text("The circuit of the generator you selected: ")],
+        [sg.Image(key='-IMAGE_CIRCUIT-')]
+    ]
+    return sg.Window('Circuit window', layout, finalize=True)
     
 
 
@@ -73,10 +84,10 @@ if __name__ == "__main__":
         ],
         [
             sg.Text("Amount of numbers: "), sg.Input(key='-NUMS-'), sg.Button('Generate', disabled=True, key='-GENERATE_BUTTON-'),
-            sg.Button('Get Numbers', disabled=True, key='-NUMBERS_BUTTON-')
+            sg.Button('Get Numbers', disabled=True, key='-NUMBERS_BUTTON-') 
         ],
         [
-            sg.Button('Run Box-Muller', disabled=True, key='-BOX-MULLER_BUTTON-')
+            sg.Button('Run Box-Muller', disabled=True, key='-BOX-MULLER_BUTTON-'), sg.Button('See Circuit', disabled=True, key='-CIRCUIT_BUTTON-')
         ]
         
     ]
@@ -86,7 +97,10 @@ if __name__ == "__main__":
         [sg.Menu(menu_def, tearoff=False, key='-MENU-', font=AppFont)],
         [sg.Column(left_part, expand_y=True), sg.VSeparator(), sg.Column(right_part, element_justification='center')]
     ]
-    tabbed_layout = [[sg.TabGroup([[sg.Tab('MainTab', layout_main)]])]]
+    layout_statistics = [
+        [sg.Multiline(size=(100,30), key='-STATISTICS_BOX-')]
+    ]
+    tabbed_layout = [[sg.TabGroup([[sg.Tab('MainTab', layout_main), sg.Tab('Statistics', layout_statistics)]])]]
 
 
     _VARS['window'] = sg.Window(
@@ -95,6 +109,7 @@ if __name__ == "__main__":
                         finalize=True,
                         resizable=True)
     _VARS['numbers_window'] = None
+    _VARS['circuit_window'] = None
     _VARS['window']['-LISTBOX-'].update(set_to_index=[0])
     generator_string = 'Hadamard1Bit'
     while True:
@@ -113,10 +128,13 @@ if __name__ == "__main__":
                 RNG = getattr(qrngs, qrngs.function_map[generator_string])
                 nums = RNG(int(values['-NUMS-']))
                 _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
+                _VARS['window']['-CIRCUIT_BUTTON-'].update(disabled=False)
             else:
                 RNG = getattr(prngs, prngs.function_map[generator_string])
                 nums = RNG(int(values['-NUMS-']))
                 _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
+                _VARS['window']['-CIRCUIT_BUTTON-'].update(disabled=True)
+            _VARS['window']['-STATISTICS_BOX-'].print(generate_descriptive_stats(nums))
             if _VARS['plt_fig'] == False:
                 draw_chart(nums)
             else:
@@ -129,6 +147,8 @@ if __name__ == "__main__":
                 draw_chart(nums)
             else:
                 update_chart(nums)
+            _VARS['window']['-STATISTICS_BOX-'].update('')
+            _VARS['window']['-STATISTICS_BOX-'].print(generate_descriptive_stats(nums))
         if event == '-NUMBERS_BUTTON-':
             _VARS['numbers_window'] = make_numbers_window() 
 
@@ -150,6 +170,15 @@ if __name__ == "__main__":
                     wrote = True
                 if event == '-CLIPBOARD_COPY_BUTTON-':
                     subprocess.check_call('echo ' + str(nums).strip() + '|clip', shell=True)
+        
+        if event == '-CIRCUIT_BUTTON-':
+            _VARS['circuit_window'] = make_circuit_window()
+            circuit = qrngs.QRNGs[generator_string]
+            circuit.draw(output='mpl', filename=f'./{generator_string}.png')
+            image = Image.open(f'./{generator_string}.png')
+            image_Tk = ImageTk.PhotoImage(image=image)
+            _VARS['circuit_window']['-IMAGE_CIRCUIT-'].update(data=image_Tk)
+            remove(f"./{generator_string}.png")
                     
                     
     _VARS['window'].close()
