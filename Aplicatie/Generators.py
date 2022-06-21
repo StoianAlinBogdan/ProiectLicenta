@@ -1,20 +1,10 @@
 from qiskit import Aer, QuantumCircuit, transpile
-from qiskit_finance.circuit.library import UniformDistribution
+from qiskit_finance.circuit.library import UniformDistribution, NormalDistribution
+from qiskit.extensions import Initialize
 import math
+from Helpers import Box_Muller
 import numpy as np
-
-def Box_Muller(u1, u2):
-    u1 = np.array(u1)
-    u2 = np.array(u2)
-    u1 = u1 / max(u1)
-    u2 = u2 / max(u2)
-    z1 = np.sqrt(-2 * np.log(u1, where=u1>0)) * np.cos(2 * math.pi * u2)
-    z2 = np.sqrt(-2 * np.log(u1, where=u1>0)) * np.sin(2 * math.pi * u2)
-    z1 = np.round_((z1 / max(z1))*255)
-    z2 = np.round_((z2 / max(z2))*255)
-    z1 = np.nan_to_num(z1)
-    z2 = np.nan_to_num(z2)
-    return (z1.tolist(), z2.tolist())
+from scipy import stats
 
 class QRNG:
     def __init__(self):
@@ -31,7 +21,16 @@ class QRNG:
         self.QC_Uniform_1bit = transpile(self.QC_Uniform_1bit, self.sim, optimization_level=3)
         self.QC_Uniform_8bit = UniformDistribution(8)
         self.QC_Uniform_8bit = transpile(self.QC_Uniform_8bit, self.sim, optimization_level=3)
-        self.QRNGs = [self.QC_Hadamard_1bit, self.QC_Hadamard_8bit, self.QC_RY_1bit, self.QC_RY_8bit, self.QC_Uniform_1bit, self.QC_Uniform_8bit]
+        self.QC_Normal_8bit = NormalDistribution(8, mu=0, sigma=1, bounds=(-6, 6))
+        self.QC_Normal_8bit = transpile(self.QC_Normal_8bit, self.sim, optimization_level=3)
+        self.QC_NormalEu_8bit = self.create_normal_circuit()
+        self.QC_NormalEu_8bit = transpile(self.QC_NormalEu_8bit, self.sim, optimization_level=3)
+
+        
+        self.QRNGs = [
+            self.QC_Hadamard_1bit, self.QC_Hadamard_8bit, self.QC_RY_1bit, self.QC_RY_8bit,
+            self.QC_Uniform_1bit, self.QC_Uniform_8bit, self.QC_Normal_8bit, self.QC_NormalEu_8bit
+         ]
         for i in range(len(self.QRNGs)):
             self.QRNGs[i].measure_all()
 
@@ -41,7 +40,9 @@ class QRNG:
             'RY1Bit': self.QC_RY_1bit,
             'RY8Bit': self.QC_RY_8bit,
             'Uniform1Bit': self.QC_Uniform_1bit,
-            'Uniform8Bit': self.QC_Uniform_8bit
+            'Uniform8Bit': self.QC_Uniform_8bit,
+            'Normal8Bit': self.QC_Normal_8bit,
+            'NormalEu8Bit': self.QC_NormalEu_8bit
         }
         self.function_map = {
             'Hadamard1Bit': 'run_Hadamard_1bit',
@@ -49,8 +50,20 @@ class QRNG:
             'RY1Bit': 'run_RY_1bit',
             'RY8Bit': 'run_RY_8bit',
             'Uniform1Bit': 'run_Uniform_1bit',
-            'Uniform8Bit': 'run_Uniform_8bit'
+            'Uniform8Bit': 'run_Uniform_8bit',
+            'Normal8Bit': 'run_Normal_8bit',
+            'NormalEu8Bit': 'run_NormalEu_8bit'
         }
+    
+    def create_normal_circuit(self):
+        x = np.linspace(-6, 6, num=2**8)
+        probabilities = stats.multivariate_normal.pdf(x, 1, 1)
+        normalized_probabilities = probabilities / np.sum(probabilities)
+        qc_normal = QuantumCircuit(9)
+        initial = Initialize(np.sqrt(normalized_probabilities))
+        distribution = initial.gates_to_uncompute().inverse()
+        qc_normal.compose(distribution, inplace=True)
+        return qc_normal
 
     def concatenate_bits(self, memory):
         numbers = []
@@ -110,7 +123,23 @@ class QRNG:
         memory = result.get_memory()
         for i in range(len(memory)):
             memory[i] = int(memory[i], 2)
-        return memory  
+        return memory 
+
+    def run_Normal_8bit(self, amount):
+        qc = self.QRNGs['Normal8Bit'] 
+        result = self.sim.run(qc, shots=amount, memory=True).result()
+        memory = result.get_memory()
+        for i in range(len(memory)):
+            memory[i] = int(memory[i], 2)
+        return memory
+    
+    def run_NormalEu_8bit(self, amount):
+        qc = self.QRNGs['NormalEu8Bit']
+        result = self.sim.run(qc, shots=amount, memory=True).result()
+        memory = result.get_memory()
+        for i in range(len(memory)):
+            memory[i] = int(memory[i], 2)
+        return memory
 
 
 class PRNG:

@@ -7,6 +7,7 @@ import itertools
 from PIL import ImageTk, Image
 from os import remove
 from Helpers import generate_descriptive_stats
+from timeit import default_timer as Timer
 
 _VARS = {
     'window': False,
@@ -126,32 +127,45 @@ if __name__ == "__main__":
             _VARS['window']['-NUMBERS_BUTTON-'].update(disabled=False)
             if generator_string in qrngs.QRNGs.keys():
                 RNG = getattr(qrngs, qrngs.function_map[generator_string])
+                prev_time = Timer()
                 nums = RNG(int(values['-NUMS-']))
-                _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
+                time = Timer()
+                if generator_string[0:6] != 'Normal':
+                    _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
                 _VARS['window']['-CIRCUIT_BUTTON-'].update(disabled=False)
             else:
+                prev_time = Timer()
                 RNG = getattr(prngs, prngs.function_map[generator_string])
+                time = Timer()
                 nums = RNG(int(values['-NUMS-']))
                 _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
                 _VARS['window']['-CIRCUIT_BUTTON-'].update(disabled=True)
-            _VARS['window']['-STATISTICS_BOX-'].print(generate_descriptive_stats(nums))
+            _VARS['window']['-STATISTICS_BOX-'].update('')
+            stats = generate_descriptive_stats(nums)
+            for stat in stats:
+                _VARS['window']['-STATISTICS_BOX-'].print(stat + ': ' + str(stats[stat]))
+            _VARS['window']['-STATISTICS_BOX-'].print(f"Time to execute: {time - prev_time} seconds")
             if _VARS['plt_fig'] == False:
                 draw_chart(nums)
             else:
                 update_chart(nums)
             ran_box_muller = 0
         if event == '-BOX-MULLER_BUTTON-':
+            prev_time = Timer()
             nums_1, nums_2 = gen.Box_Muller(nums[0:len(nums)//2], nums[len(nums)//2:len(nums)])
             nums = list(itertools.chain(*[[x for x in nums_1], [x for x in nums_2]]))
+            time = Timer()
             if _VARS['plt_fig'] == False:
                 draw_chart(nums)
             else:
                 update_chart(nums)
             _VARS['window']['-STATISTICS_BOX-'].update('')
-            _VARS['window']['-STATISTICS_BOX-'].print(generate_descriptive_stats(nums))
+            stats = generate_descriptive_stats(nums)
+            for stat in stats:
+                _VARS['window']['-STATISTICS_BOX-'].print(stat + ': ' + str(stats[stat]))
+            _VARS['window']['-STATISTICS_BOX-'].print(f"Time to execute (Box-Muller only): {time - prev_time} seconds")
         if event == '-NUMBERS_BUTTON-':
             _VARS['numbers_window'] = make_numbers_window() 
-
             _VARS['numbers_window']['-NUMBERS_BOX-'].print(nums[0:len(nums)//100])
             wrote = False
             disabled_button = False
