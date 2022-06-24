@@ -2,7 +2,6 @@ import pandas as pd
 import math
 import numpy as np
 
-
 def generate_descriptive_stats(nums):
     dict_for_df = {
         'nums': nums
@@ -24,6 +23,10 @@ def generate_descriptive_stats(nums):
     stats['kurtosis'] = df['nums'].kurt()
     stats['Kologomorov-Smirnov test vs. uniform (value should be very close to 0 for uniform):'] = KS_uniform(nums)
     stats['Z-test vs. uniform (Value should be <-2.5 or >2.5: '] = Z_test(nums)
+    stats['Chi squared test for uniformity (Value should be close to 1 for uniform): '] = chi_2_test(nums)
+    stats['Product of successive values (should be 1/4 for uniform): '] = prod_succ(nums)
+    stats['Correlation coefficient (should be 0 for uniform): '] = correlation(nums)
+
     return stats
 
 
@@ -65,3 +68,42 @@ def Z_test(nums):
     df2 = pd.DataFrame.from_dict(data_dist_uniform)
     z_calc = (df['counts'].mean() - df2['counts'].mean()) / (math.sqrt(df.var()['counts'] / len(df['counts']) + df2.var()['counts'] / len(df2['counts'])))
     return z_calc
+
+
+def chi_2_test(nums):
+    nums = np.array(nums)
+    interval = [0, 32] # 8 intervale, gen
+    sum = 0
+    for i in range(0, 8):
+        interval[0] = 32 * i
+        interval[1] = 32 * i + 32
+        count = np.count_nonzero((nums >= interval[0]) & (nums < interval[1]))
+        sum += (count - len(nums) / 8) ** 2
+    score = ( 8 / (len(nums) * 7) ) * sum
+    return score
+
+
+def prod_succ(nums):
+    nums = np.array(nums)
+    nums = nums / max(nums)
+    sum = 0
+    for i in range(1, len(nums)):
+        sum += nums[i] * nums[i-1]
+    coef = 1 / (len(nums) - 1) * sum
+    return coef
+
+
+def correlation(nums):
+    sum1 = 0
+    sum2 = 0
+    nums = np.array(nums)
+    avg = np.average(nums)
+    N = len(nums)
+    for i in range(1, N):
+        sum1 += (nums[i] - avg) * (nums[i-1] - avg)
+    sus = N * sum1
+    for i in range(N):
+        sum2 += ( nums[i] - avg ) ** 2
+    jos = (N - 1) * sum2
+    coef = sus / jos
+    return coef
