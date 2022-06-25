@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+from numpy import apply_along_axis
 import Generators as gen
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -62,6 +63,15 @@ def make_circuit_window():
         [sg.Image(key='-IMAGE_CIRCUIT-')]
     ]
     return sg.Window('Circuit window', layout, finalize=True)
+
+
+def make_login_window():
+    layout = [
+        [sg.Text("Insert your IBM Quantum API Key: ")],
+        [sg.Multiline(size=(30, 1), key='-API_KEY-', no_scrollbar=True)],
+        [sg.Button('Login', key='-LOGIN_BUTTON-')]
+    ]
+    return sg.Window('Login window', layout, finalize=True)
     
 
 
@@ -81,11 +91,14 @@ if __name__ == "__main__":
     ]
     right_part = [
         [
+             sg.Text('Simulated Mode', key='-MODE_TEXT-', text_color='green') 
+        ],
+        [
             sg.Canvas(key='-CANVAS-', size=(650,550))
         ],
         [
-            sg.Text("Amount of numbers: "), sg.Input(key='-NUMS-'), sg.Button('Generate', disabled=True, key='-GENERATE_BUTTON-'),
-            sg.Button('Get Numbers', disabled=True, key='-NUMBERS_BUTTON-') 
+            sg.Text("Amount of numbers: "), sg.Input(key='-NUMS-', size=(30,1)), sg.Button('Generate', disabled=True, key='-GENERATE_BUTTON-'),
+            sg.Button('Get Numbers', disabled=True, key='-NUMBERS_BUTTON-')
         ],
         [
             sg.Button('Run Box-Muller', disabled=True, key='-BOX-MULLER_BUTTON-'), sg.Button('See Circuit', disabled=True, key='-CIRCUIT_BUTTON-')
@@ -113,10 +126,13 @@ if __name__ == "__main__":
     _VARS['circuit_window'] = None
     _VARS['window']['-LISTBOX-'].update(set_to_index=[0])
     generator_string = 'Hadamard1Bit'
+    API_KEY = None  
     while True:
         event, values = _VARS['window'].read(timeout=500)
-        if values['-NUMS-'] != '':
+        if values['-NUMS-'] != '' and API_KEY is None:
             _VARS['window']['-GENERATE_BUTTON-'].update(disabled=False)
+        elif API_KEY is not None and values['-NUMS-'] != '' and int(values['-NUMS-']) <= 1000:
+            _VARS['window']['-GENERATE_BUTTON-'].update(disabled=False)            
         else:
             _VARS['window']['-GENERATE_BUTTON-'].update(disabled=True)  
         if event == sg.WIN_CLOSED or event == 'Exit':
@@ -193,7 +209,26 @@ if __name__ == "__main__":
             image_Tk = ImageTk.PhotoImage(image=image)
             _VARS['circuit_window']['-IMAGE_CIRCUIT-'].update(data=image_Tk)
             remove(f"./{generator_string}.png")
-                    
+
+     
+        if event == 'Real':
+            _VARS['login_window'] = make_login_window()
+            while True:
+                event, values = _VARS['login_window'].read(timeout=500)
+                if event == '-LOGIN_BUTTON-':
+                    API_KEY = values['-API_KEY-']
+                    _VARS['login_window'].Close()
+                    _VARS['window']['-MODE_TEXT-'].update(value='Real Mode', text_color='red')
+                    qrngs.API_KEY = API_KEY
+                    qrngs.login()
+                    break
+        
+        if event == 'Simulated':
+            API_KEY = None
+            qrngs.API_KEY = None
+            _VARS['window']['-MODE_TEXT-'].update(value='Simulated Mode', text_color='green')
+            
+            
                     
     _VARS['window'].close()
 

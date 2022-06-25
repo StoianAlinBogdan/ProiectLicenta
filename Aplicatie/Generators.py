@@ -1,4 +1,4 @@
-from qiskit import Aer, QuantumCircuit, transpile
+from qiskit import Aer, QuantumCircuit, transpile, IBMQ
 from qiskit_finance.circuit.library import UniformDistribution, NormalDistribution
 from qiskit.extensions import Initialize
 import math
@@ -25,6 +25,8 @@ class QRNG:
         self.QC_Normal_8bit = transpile(self.QC_Normal_8bit, self.sim, optimization_level=3)
         self.QC_NormalEu_8bit = self.create_normal_circuit()
         self.QC_NormalEu_8bit = transpile(self.QC_NormalEu_8bit, self.sim, optimization_level=3)
+        self.API_KEY = None
+        self.backend = None
 
         
         self.QRNGs = [
@@ -54,12 +56,16 @@ class QRNG:
             'Normal8Bit': 'run_Normal_8bit',
             'NormalEu8Bit': 'run_NormalEu_8bit'
         }
+
+    def login(self):
+        provider = IBMQ.enable_account(self.API_KEY)
+        self.backend = provider.get_backend('ibm_oslo')
     
     def create_normal_circuit(self):
         x = np.linspace(-6, 6, num=2**8)
         probabilities = stats.multivariate_normal.pdf(x, 1, 1)
         normalized_probabilities = probabilities / np.sum(probabilities)
-        qc_normal = QuantumCircuit(9)
+        qc_normal = QuantumCircuit(8)
         initial = Initialize(np.sqrt(normalized_probabilities))
         distribution = initial.gates_to_uncompute().inverse()
         qc_normal.compose(distribution, inplace=True)
@@ -80,8 +86,15 @@ class QRNG:
         return numbers
 
     def run_Hadamard_1bit(self, amount):
-        qc = self.QRNGs['Hadamard1Bit']
-        result = self.sim.run(qc, shots=8*amount, memory=True).result()
+        if self.API_KEY is None:
+            qc = self.QRNGs['Hadamard1Bit']
+            result = self.sim.run(qc, shots=8*amount, memory=True).result()
+        else:
+            qc = QuantumCircuit(7)
+            qc.h(range(7))
+            qc.measure_all()
+            qc = transpile(qc, self.backend, optimization_level=3)
+            result = self.backend.run(qc, memory=True).result()
         memory = result.get_memory()
         numbers = self.concatenate_bits(memory)
         return numbers
