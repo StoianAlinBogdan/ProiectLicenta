@@ -1,3 +1,4 @@
+from email import generator
 from qiskit import Aer, QuantumCircuit, transpile, IBMQ
 from qiskit_finance.circuit.library import UniformDistribution, NormalDistribution
 from qiskit.extensions import Initialize
@@ -23,7 +24,7 @@ class QRNG:
         self.QC_Uniform_8bit = transpile(self.QC_Uniform_8bit, self.sim, optimization_level=3)
         self.QC_Normal_8bit = NormalDistribution(8, mu=0, sigma=1, bounds=(-6, 6))
         self.QC_Normal_8bit = transpile(self.QC_Normal_8bit, self.sim, optimization_level=3)
-        self.QC_NormalEu_8bit = self.create_normal_circuit()
+        self.QC_NormalEu_8bit = self.create_normal_circuit(8)
         self.QC_NormalEu_8bit = transpile(self.QC_NormalEu_8bit, self.sim, optimization_level=3)
         self.API_KEY = None
         self.backend = None
@@ -61,11 +62,11 @@ class QRNG:
         provider = IBMQ.enable_account(self.API_KEY)
         self.backend = provider.get_backend('ibm_oslo')
     
-    def create_normal_circuit(self):
-        x = np.linspace(-6, 6, num=2**8)
+    def create_normal_circuit(self, size):
+        x = np.linspace(-6, 6, num=2**size)
         probabilities = stats.multivariate_normal.pdf(x, 1, 1)
         normalized_probabilities = probabilities / np.sum(probabilities)
-        qc_normal = QuantumCircuit(8)
+        qc_normal = QuantumCircuit(size)
         initial = Initialize(np.sqrt(normalized_probabilities))
         distribution = initial.gates_to_uncompute().inverse()
         qc_normal.compose(distribution, inplace=True)
@@ -84,6 +85,43 @@ class QRNG:
                 c = 0
         numbers = [int(x, 2) for x in numbers]
         return numbers
+
+    def run_circuit(self, generator_string, amount):
+        if self.API_KEY is None:
+            qc = self.QRNGs[generator_string]
+            if qc.num_qubits == 1:
+                result = self.sim.run(qc, shots=8*amount, memory=True).result()
+            else:
+                result = self.sim.run(qc, shots=amount, memory=True).result()
+        else:
+
+            if generator_string == 'Hadamard1Bit':
+                qc = QuantumCircuit(7)
+                qc.h(range(7))
+                qc.measure_all()
+                qc = transpile(qc, self.backend, optimization_level=3)
+                result = self.backend.run(qc, shots=8*amount, memory=True).result()
+            elif generator_string == 'RY1Bit':
+                qc = QuantumCircuit(7)
+                qc.ry(range(7))
+                qc.measure_all()
+                qc = transpile(qc, self.backend, optimization_level=3)
+                result = self.backend.run(qc, shots=8*amount, memory=True).result()
+            elif generator_string == 'NormalEu8Bit':
+                qc = self.create_normal_circuit(7)
+                qc.measure_all()
+                qc = transpile(qc, self.backend, optimization_level=3)
+                result = self.backend.run(qc, shots=amount, memory=True).result()
+            else:
+                pass
+        
+        memory = result.get_memory()
+        if qc.num_qubits == 1:
+            numbers = self.concatenate_bits(memory)
+        else:
+            numbers = [int(x, 2) for x in memory]
+        return numbers
+            
 
     def run_Hadamard_1bit(self, amount):
         if self.API_KEY is None:

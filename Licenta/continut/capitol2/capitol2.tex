@@ -145,7 +145,7 @@ Cum această lucrare se bazează în mare parte și pe măsurarea performanțelo
 
 Toate aceste elemente hardware ar putea avea un efect asupra rezultatelor măsurătorilor de performanță în cazul metodelor simulate, dar ideea lucrări este de a compara metodele între ele - nu contează foarte mult valorile propriu-zise rezultate din măsurători!
 
-Totuși, pentru unele metode, cum ar fi citirea din \textit{device}-ul linux \textit{/dev/urandom}, acest lucru va fi, din nou, menționat explicit unde este cazul, iar acest lucru se va face pe un calculator cu următoarele specificații:
+Totuși, pentru unele metode, cum ar fi citirea din \textit{device}-ul linux \textit{/dev/urandom} sau \textit{/dev/hwrng}, acest lucru va fi, din nou, menționat explicit unde este cazul, iar acest lucru se va face pe un calculator cu următoarele specificații:
 
 
 \vspace{0.5cm}
@@ -158,38 +158,41 @@ Totuși, pentru unele metode, cum ar fi citirea din \textit{device}-ul linux \te
     \item SSD 256 GB
 \end{itemize}
 
+De menționat faptul că Procesoarele Intel pornind cu macroarhitectura Ivy Bridge conțin un generator de numere aleatorii hardware care este expus prin intermediul unor instrucțiuni în limbaj de asamblare (RDRAND, RDSEED), dar kernel-ul Linux expune HWRNG-ul și prin intermediul unui dispozitiv (/dev/hwrng), lucru care va permite citirea de numere aleatoare din limbajul de programare ales de mine, la un nivel înalt. 
+
+
 În afară de efectul componentelor hardware clasice asupra valorilor absolute de performanță, nu prea există vreo altă componentă hardware care să fie relevantă pentru ansamblul lucrării mele. Am menționat aceste lucruri aici doar pentru a se știe cu ce componente am obținut rezultatele prezentate.
 
 \pagebreak
 
 \subsection{Calculatorul cuantic}
-Pentru a menține rigurozitate în măsurătorile de performanță care urmează a fi prezentate, voi folosi pe tot parcursul lucrării un singur calculator cuantic adevărat (prin contrast cu unul simulat), și anume calculatorul IBMQ\_Bogota oferit prin serviciul IBM Quantum Experience. La fel ca și pentru calculatorul clasic, voi lista specificațiile acestui calculator, deoarece toate pot fi importante pentru indicii de performanță obținuți.
+Pentru a menține rigurozitate în măsurătorile de performanță care urmează a fi prezentate, voi folosi pe tot parcursul lucrării un singur calculator cuantic adevărat (prin contrast cu unul simulat), și anume calculatorul IBMQ\_Oslo oferit prin serviciul IBM Quantum Experience. La fel ca și pentru calculatorul clasic, voi lista specificațiile acestui calculator, deoarece toate pot fi importante pentru indicii de performanță obținuți.
 
 Specificațiile calculatorului cuantic sunt următoarele:
 \begin{itemize}
-    \item 5 Qubiți
+    \item 7 Qubiți
     \item 32 Volum Cuantic
-    \item 2.3K CLOPS
-    \item Tip de procesor: Falcon r4L
-    \item Version: 1.6.37
+    \item 2.6K CLOPS
+    \item Tip de procesor: Falcon 5.11H
+    \item Version: 1.0.3
     \item Basis gates: CX, ID, RZ, SX, X
 \end{itemize}
 
 Explicațiile specificațiilor sunt următoarele:
 \begin{itemize}
-    \item Qubiți - Cantitatea de qubiți pe care o are disponibilă calculatorul cuantic; aceștia au o anumită configurație prezentă în figura \ref{fig:TopologieBogota}. Qubiții legați unii de ceilalți pot fi entangled sau se pot executa porți logice cuantice pe mai mulți qubiți între ei, fără a putea face acest lucru între qubiți care nu au conexiune între ei. Conexiunea este fizică și legată strict de design-ul calculatorului cuantic.
+    \item Qubiți - Cantitatea de qubiți pe care o are disponibilă calculatorul cuantic; aceștia au o anumită configurație prezentă în figura \ref{fig:TopologieOslo}. Qubiții legați unii de ceilalți pot fi entangled sau se pot executa porți logice cuantice pe mai mulți qubiți între ei, fără a putea face acest lucru între qubiți care nu au conexiune între ei. Conexiunea este fizică și legată strict de design-ul calculatorului cuantic.
     \item Volum Cuantic - O unitate de măsură care reprezintă "dimensiunea" maximă a unui circuit cuantic care poate fi executat de un calculator cuantic. De exemplu, dacă un calculator cuantic cu 8 qubiți poate executa un circuit în care se vor afla maxim 8 stări $\ket{\psi}$ intermediare, atunci spunem că acel calculator are un Volum Cuantic de 256. Prin urmare, volumul cuantic este o specificație de performanță independentă de hardware-ul abstractizat.
     \item CLOPS - Circuit Layer Operations Per Second - Câte straturi de volum cuantic pot fi executate de un QPU (Quantum Processing Unit) într-o unitate de timp. Documentația de la IBM \cite{misc:web:DocumentatieIBMQ} recomandă lectura lucrării \cite{misc:paper:QSS:WackAndrewEtAl} pentru a înțelege conceptul mai bine.
-    \item Tipul de procesor: Există o mare varietate de QPU-uri dezvoltate, atât de către IBM, cât și de către alte firme. Familia de procesoare \textit{Falcon} cu seria r4 sunt o platformă pentru circuite de medii dimensiuni, iar calculatorul IBMQ\_Bogota este unul disponibil public, gratuit, prin API-ul cloud de la IBM Quantum Experience.
+    \item Tipul de procesor: Există o mare varietate de QPU-uri dezvoltate, atât de către IBM, cât și de către alte firme. Familia de procesoare \textit{Falcon} cu seria r5 sunt o platformă pentru circuite de medii dimensiuni, iar calculatorul IBMQ\_Oslo este unul disponibil public, gratuit, prin API-ul cloud de la IBM Quantum Experience.
     \item Versiunea: versiunea procesorului în ansamblu.
     \item Basis gates: porțile compatibile cu QPU-ul dat. Orice circuit care folosește alte porți trebuie \textit{transpilat}, adică trebuiesc descompuse toate celelalte porți în aceste porți pentru a putea fi executat. Qiskit, framework-ul pentru calcul cuantic de la IBM, permite transpilarea automată a oricăror circuite în circuite compatibile cu calculatoarele cuantice disponibile public.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \includegraphics{anexe/figuri/TopologieBogota.png}
-    \caption{Topologia fizică a calculatorului cuantic \textit{IBMQ\_Bogota} }
-    \label{fig:TopologieBogota}
+    \includegraphics{anexe/figuri/TopologieOslo.png}
+    \caption{Topologia fizică a calculatorului cuantic \textit{IBMQ\_Oslo} }
+    \label{fig:TopologieOslo}
 \end{figure}
 
 \section{Componente software}
@@ -213,7 +216,7 @@ Qiskit este format din mai multe subcomponente, din care voi enumera câteva, pe
 
 \subsubsection{Qiskit Terra}
 
-Terra este componenta de bază a SDK-ului. Qiskit Terra permite programatorului creearea de circuite cuantice, adăugarea de porți cuantice, dar și elemente de transpilare și optimizare pentru a face oricare circuit cuantic dat să fie compatibil cu un dispozitiv cuantic țintă. De exemplu, cum am explicat anterior, voi folosi calculatorul cuantic IBMQ\_Bogota, care permite executarea circuitelor care conțin doar porțile CX, ID, RZ, SX și X, iar dacă eu voi folosi o poartă H, de exemplu, voi transpila circuitul meu în forma lui descompusă folosind funcții din Qiskit Terra.
+Terra este componenta de bază a SDK-ului. Qiskit Terra permite programatorului creearea de circuite cuantice, adăugarea de porți cuantice, dar și elemente de transpilare și optimizare pentru a face oricare circuit cuantic dat să fie compatibil cu un dispozitiv cuantic țintă. De exemplu, cum am explicat anterior, voi folosi calculatorul cuantic IBMQ\_Oslo, care permite executarea circuitelor care conțin doar porțile CX, ID, RZ, SX și X, iar dacă eu voi folosi o poartă H, de exemplu, voi transpila circuitul meu în forma lui descompusă folosind funcții din Qiskit Terra.
 
 \subsubsection{Qiskit Aer}
 

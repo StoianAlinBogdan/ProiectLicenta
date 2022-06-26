@@ -142,9 +142,10 @@ if __name__ == "__main__":
         if event == '-GENERATE_BUTTON-':
             _VARS['window']['-NUMBERS_BUTTON-'].update(disabled=False)
             if generator_string in qrngs.QRNGs.keys():
-                RNG = getattr(qrngs, qrngs.function_map[generator_string])
+                #RNG = getattr(qrngs, qrngs.function_map[generator_string])
                 prev_time = Timer()
-                nums = RNG(int(values['-NUMS-']))
+                #nums = RNG(int(values['-NUMS-']))
+                nums = qrngs.run_circuit(generator_string, int(values['-NUMS-']))
                 time = Timer()
                 if generator_string[0:6] != 'Normal':
                     _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
@@ -221,6 +222,7 @@ if __name__ == "__main__":
                     _VARS['window']['-MODE_TEXT-'].update(value='Real Mode', text_color='red')
                     qrngs.API_KEY = API_KEY
                     qrngs.login()
+                    sg.Popup('Real mode engaged! Quantum computer has only 7 Qubits! Not all Circuits implemented!', title='REAL MODE WARNING')
                     break
         
         if event == 'Simulated':
