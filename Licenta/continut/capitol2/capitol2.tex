@@ -162,6 +162,19 @@ De menționat faptul că Procesoarele Intel pornind cu macroarhitectura Ivy Brid
 
 
 În afară de efectul componentelor hardware clasice asupra valorilor absolute de performanță, nu prea există vreo altă componentă hardware care să fie relevantă pentru ansamblul lucrării mele. Am menționat aceste lucruri aici doar pentru a se știe cu ce componente am obținut rezultatele prezentate.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{continut/capitol2/figuri/BenchmarkLenovo.png}
+    \caption{Rezultatul unui benchmark pentru CPU-ul laptop-ului I în mod single core.}
+    \label{fig:BenchmarkLenovo}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{continut/capitol2/figuri/BenchmarkMyria.png}
+    \caption{Rezultatul unui benchmark pentru CPU-ul laptop-ului II în mod single core.}
+    \label{fig:BenchmarkMyria}
+\end{figure}
 
 \pagebreak
 
@@ -242,3 +255,41 @@ Jupyter Notebook reprezintă platforma pentru creearea de documente stil "notebo
 \end{figure}
 
 SDK-ul Qiskit prezentat anterior conține și o multitudine de notebook-uri Jupyter pregătite pentru a demonstra capabilitățile framework-ului, dar și care conține exerciții de rezolvat pentru cei care învață să îl folosească. Așadar, decizia de a folosi Jupyter Notebook în cadrul astei lucrări a fost una naturală pentru mine.
+
+\subsection{Framework-ul PySimpleGUI}
+
+PySimpleGUI este un framework de dezvoltare GUI wrapper pentru faimosul framework Tkinter. PySimpleGUI are aceleași caracteristici ca Tkinter, dar permite un proces de dezvoltare mult mai dev-friendly. PySimpleGUI este inspirat de framework-urile EasyGUI și WxSimpleGUI, cu posibilitatea de a defini layout-uri custom.
+
+PySimpleGUI oferă și versiuni construite deasupra framework-urilor Qt (PySide2) și Remi (pentru interfețe web-based). În cadrul proiectului, am folosit versiunea wrapper pentru Tkinter pentru că este cea mai completă și bine menținută, iar majoritatea widget-urilor (numite "elemente" în PySimpleGUI) de care am nevoie sunt prezente și utilizabile cu versiunea 3.9 de Python.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{continut/capitol2/figuri/PySimpleGUI.jpg}
+    \caption{Programul sample al PySimpleGUI}
+    \label{fig:PySimpleGUISample}
+\end{figure}
+
+\section{Pseudocodul algoritmului general de lucru cu QRNG-uri}
+Următorul pseudocod reprezintă algoritmul general utilizat pe parcursul întregii acestei lucrări, fie pentru vizualizări, fie pentru măsurători de performanță, fie pentru obținerea numerelor în sine. 
+
+\begin{algorithm}[ht]
+    \caption{QRNG General Algorithm}\label{alg:QRNG}
+    \begin{algorithmic}[1]
+        \Procedure{Run\_QRNG}{shots, experiments}
+           \State $\textit{Initialize circuit}$
+           \State $\textit{Define gates}$
+           \State $\textit{Initialize backend (or simulator)}$
+           \State $\textit{Transpile circuit to backend compatible version}$
+           \For {$i \; \textit{in range(experiments)}$}
+           \State $\textit{Run circuit with} \; \text{shots}\; \textit{amount of shots, memory enabled}$
+           \State $\textit{nums} \gets \textit{Extract memory from circuit results}$
+           \State $\textit{Perform statistical analysis on} \; \text{nums}$
+           \State $\textit{Visualize results of generation (hitogram, scatter)}$
+           \State $\textit{Provide generated numbers to user in some format}$
+           \EndFor
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+Acest algoritm, cu una sau mai multe dintre liniile 9, 10 și 11, este cel utilizat în aproximativ toate aspectele acestei lucrări.
+

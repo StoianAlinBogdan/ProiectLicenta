@@ -682,8 +682,45 @@ D_n = \sup_x |F_n(x) - F(x)|,
 \]
 unde $\sup_x$ este supremum-ul setului de distanțe. Intuitiv, statistica ia cea mai mare diferență în modul a celor două funcții de distribuție pentru toate valorile $x$.
 
-\pagebreak
+\subsection{Alte măsurători relevante pentru uniformitatea numerelor aleatorii}
+În următoarele câteva subsecțiuni voi prezenta cele câteva măsurători pentru uniformitatea numerelor aleatorii propuse în \cite{art:PetrilaMantaUnguranu:IEEESystheory:2014}.
+\subsubsection{Media distribuției}
 
+Un simplu test cantitativ pentru uniformitate este dată de media numerelor aleatorii,
+\[
+\bar{u_n} = \frac{1}{N}\sum^N_{n=1}u_n.
+\]
+Care ar trebui întotdeauna să fie aproximativ egală cu
+\[
+\int_0^1xdx = \frac{1}{2}.
+\]
+
+\subsubsection{Parametrul Pearson chi-pătrat}
+
+Pentru a testa uniformitatea, statistica chi-pătrat este definită ca
+\[
+\chi^2 = \frac{K}{N(K-1)}\sum^K_{i=1}(n_i - N/K)^2,
+\]
+unde K este numărul de subintervale în care distribuția a fost partiționată și cu $n_i$ numărul de valori în subintevalul $i$.
+
+\subsubsection{Coeficientul de corelație și forma simplificată}
+
+Un alt test important pentru măsurarea calității generatorului de numere aleatoare este testul de corelație între numere succesive generate de acesta. Luând în considerare fiecare pereche de două numere succesive generate de generator, se definește coeficientul de corelație:
+\[
+C = \frac{N\sum^N_{n=2}(u_n-\bar{u})(u_{n-1}-\bar{u})}{(N-1)\sum^N_{n=1}(u_n-\bar{u})^2}
+\]
+Coeficientul de corelație $C$ redă informații relevante despre conexiunile dintre diferite subseturi de date. Acest coeficient ar trebui să tindă la valoarea 0.
+
+Totuși, după cum se poate observa, în această definiție, numitorul este un  termen de uniformizare. Astfel, expresia poate să nu descrie exclusiv corelația, fiindcă depinde de uniformitatea numerelor aleatorii. Cum numitorul, în general, este un termen de normalizare, corelația poate fi descrisă pur și simplu de media aritmetică a perechilor de numere succesive,
+\[
+u_n u_{n-1} = \frac{1}{N-1}\sum^N_{n=2}u_n u_{n-1},
+\]
+care ar trebui întotdeauna să tindă la
+\[
+\int_0^1 \int_0^1 xydxdy = \frac{1}{4}
+\]
+pentru numere necorelate. 
+\pagebreak
 \section{Numerele aleatorii, generatorarele de numere pseudoaleatorii și proprietățile lor}
 \subsection{Definiția numerelor aleatorii și teste de aleatoritate}
 Un număr aleator este un număr generat printr-o metodă oarecare care face parte dintr-un set care prezintă \textit{aleatoritate statistică}. O secvență de numere poate fi numită drept \textit{aleatorii} din punct de vedere statistic dacă nu urmează un anumit tipar sau șablon și nu prezintă regularități sau periodicitate. De exemplu, variabila rezultată prin aruncarea unui zar netrucat și memorizarea rezultatelor se poate numi drept aleatorii statistic. 
