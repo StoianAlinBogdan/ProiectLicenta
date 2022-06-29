@@ -269,10 +269,19 @@ PySimpleGUI oferă și versiuni construite deasupra framework-urilor Qt (PySide2
     \label{fig:PySimpleGUISample}
 \end{figure}
 
+\subsection{Framework-ul Pandas}
+Pandas este o bibliotecă construită peste Python pentru analiză și manipulare de date. În particular, oferă structuri de date și funcții pentru manipularea tabelelor numerice. 
+
+Componenta principală a framework-ului este structura de date \textit{DataFrame}, care reprezintă forma de organizare a datelor fundamentală bibliotecii. Pe aceste DataFrame-uri, practic niște tabele, se pot executa varii operații de analiză și calcul statistic, pe lângă integrarea în întregime cu framework-ul Matplotlib (Pyplot).
+
+\subsection{Framework-ul Matplotlib(Pyplot)}
+Pyplot este o bibliotecă a limbajului de programare Python pentru vizualizare de date. Cu ajutorul acesteia voi realiza majoritatea vizualizărilor și graficelor din această lucrare.
+
+
 \section{Pseudocodul algoritmului general de lucru cu QRNG-uri}
 Următorul pseudocod reprezintă algoritmul general utilizat pe parcursul întregii acestei lucrări, fie pentru vizualizări, fie pentru măsurători de performanță, fie pentru obținerea numerelor în sine. 
 
-\begin{algorithm}[ht]
+\begin{algorithm}[H]
     \caption{QRNG General Algorithm}\label{alg:QRNG}
     \begin{algorithmic}[1]
         \Procedure{Run\_QRNG}{shots, experiments}
@@ -293,3 +302,41 @@ Următorul pseudocod reprezintă algoritmul general utilizat pe parcursul între
 
 Acest algoritm, cu una sau mai multe dintre liniile 9, 10 și 11, este cel utilizat în aproximativ toate aspectele acestei lucrări.
 
+\section{Pseudocodul algoritmului general de lucru cu PRNG-uri}
+Față de QRNG-uri, PRNG-urile sunt bazate fundamental pe începutul de la o valoare inițială "seed" și apoi calculul următoarelor valori în funcție de niște formule matematice. Astfel, mai departe voi prezenta algoritmul general de lucru cu un Pseudo-Random Number Generator, utilizat într-o formă sau alta pe parcursul implementării acestei lucrări.
+
+\begin{algorithm}[H]
+    \caption{PRNG General Algorithm}\label{alg:PRNG}
+    \begin{algorithmic}[1]
+        \Procedure{Run\_PRNG}{shots, experiments}
+        \State $\textit{Initialize seed variable(s)}$
+        \For {$i \;\text{in range}\; \textit{experiments}$}
+        \For{$j \;\text{in range}\; \textit{shots}$}
+        \State $\textit{Calculate next value, store for analysis}$
+        \State $\textit{Update global seed variable(s) with new value}$
+        \EndFor
+        \State $\textit{Perform statistical analysis on numbers}$
+        \State $\textit{Visualize results of generation}$
+        \State $\textit{Provide generated numbers to user in some format}$
+        \EndFor
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+\section{Elemente de proiectare a aplicației cu interfață utilizator}
+
+Cele două versiuni ale interfeței cu utilizatorul, una prototip și una de mai târziu din ciclul de dezvoltare sunt prezentate în următoarele figuri:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol2/figuri/Design.png}
+    \caption{Designul prototipal al aplicației}
+    \label{fig:GUIPrototype}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol2/figuri/Design2.png}
+    \caption{Designul dintr-o fază intermediară de implementare}
+    \label{fig:GUIIntermediate}
+\end{figure}

@@ -56,3 +56,121 @@ Codul complet relevant se va include în anexe (vezi Anexele \ref{anexa6:listing
 
 \textcolor{gray}{\lipsum}
 \fi
+
+\chapter{Implementarea aplicației}
+\label{cap:cap3}
+
+\section{Implementarea PRNG-urilor}
+
+Problema principală cu implementarea unui PRNG în limbajul Python este faptul că Python folosește implicit numere întregi cu precizie arbitrară (întregii pot să aibe orice dimensiune). Astfel, cum majoritatea algoritmilor de generare de numere aleatorii se bazează pe overflow / underflow intenționat, trebuie realizat o operație în plus de modulo 2 la puterea preciziei dorite (în cazul meu, 32).
+
+Ca orice generator de numere pseudoaletorii, cele două generatoare implementate de mine (LCG și KISS) se bazează pe actualizarea unei stări globale pentru calculul următorii valori. În cazul meu, voi folosi paradigma OOP pentru a stoca această valoare.
+
+Valorile pentru seed-uri sunt luate din recomandările lui George Marsaglia în \cite{misc:usenet:GeorgeMarsaglia}.
+
+În următorul listing de cod voi prezenta clasa PRNG utilizată în cea de-a doua aplicație, cea cu interfața utilizator.
+
+\begin{code}
+\begin{minted}{python}
+class PRNG:
+    def __init__(self):
+        self.LCG_rand = 6969
+        self.LCG_a = 1664525
+        self.LCG_c = 1013904223
+        self.m = 2 ** 32
+        self.jsr = 123456789
+        self.jcong = 380116160
+        self.z = 362436069
+        self.w = 521288629
+    def run_LCG(self, shots):
+        numbers = []
+        for i in range(shots):
+            self.LCG_rand =  (self.LCG_a * self.LCG_rand + self.LCG_c) \
+            % self.m
+            numbers.append(self.LCG_rand)
+        maxim = max(numbers)
+        numbers = [round((i / maxim)*255) for i in numbers]
+        return numbers
+    def run_KISS(self, shots):
+        numbers = []
+        for i in range(shots):
+            self.jsr = (self.jsr ^ ((self.jsr << 17) % self.m)) % self.m
+            self.jsr = (self.jsr ^ ((self.jsr >> 13 ) % self.m)) % self.m
+            self.jsr = (self.jsr ^ ((self.jsr << 5) % self.m)) % self.m
+            self.jcong = ((69069 * self.jcong) % self.m + 1234567) % self.m
+            self.z = ((36969 * (self.z & 65535)) % 2 ** 16 + (self.z >> 16))\
+            % 2 ** 16
+            self.w = ((18000 * (self.w & 65535)) % 2 ** 16 + (self.w >> 16))\
+            % 2 ** 16
+            mwc = ((self.z << 16) + self.w) % self.m
+            numbers.append(mwc)
+        maxim = max(numbers)
+        numbers = [round((i / maxim)*255) for i in numbers]
+        return numbers
+\end{minted}
+\end{code}
+
+După cum se poate vedea, felul în care am implementat aceste generatoare returnează numere numai între 0 și 255 (fără normalizare pe intervalul [0, 1], așa cum recomandă și George Marsaglia). Acest lucru este din cauză că am vrut să am consecvență cu generatoarele de numere aleatorii cuantice, care sunt limitate la 8 qubiți și pot astfel să genereze numere doar pe intervalul [0, 255]. Totuși, acest lucru a dus la apariția unor probleme destul de mari cu unele teste statistice (testele din suita de teste Diehard și Dieharder recomandate de Marsaglia) datorită lipsei de implementare a acestora pe sisteme cu întregi pe mai puțin de 32 de biți. 
+
+De asemenea, din cauza împărțirilor ca numere reale și a rotunjirii, numerele generate prezintă uneori "creste" cu o perioadă destul de mică, cum voi arăta în capitolul următor.
+
+\section{Implementarea QRNG-urilor}
+
+Înainte de a prezenta implementarea programatică a circuitelor cuantice utilizate (figuri la anexe), voi prezenta mai întâi o funcție ajutătoare: funcția de concatenare 8 câte 8 biți. Acest lucru este posibil doar pentru distribuțiile uniforme deoarele concatenarea a 8 biți cu probabilitate egală pentru cele două valori, 0 și 1, rezultă într-o distribuție uniformă pe toate cele 256 de valori posibile, facând astfel posibilă executarea generatoarelor pe calculatoare cuantice cu orice număr de qubiți. Același lucru nu este totuși posibil pentru circuitele de generare a numerelor aleatorii pe distribuție normală, totuși, motiv pentru am decis să păstrez limitarea numerelor generate pe intervalul [0, 255]. 
+
+\subsection{Funcția de concatenare câte 8 biți}
+
+\begin{code}
+\begin{minted}{python}
+    def concatenate_bits(self, memory):
+        numbers = []
+        temp = ''
+        c = 0
+        for i in range(len(memory)):
+            temp = temp + memory[i]
+            c = c + 1
+            if c == 8:
+                numbers.append(temp)
+                temp = ''
+                c = 0
+        numbers = [int(x, 2) for x in numbers]
+        return numbers
+\end{minted}
+\end{code}
+
+Cum numerele returnate de framework-ul qiskit pentru experimentele cu circuite cuantice sunt string-uri, construiesc numărul de 8 biți luând câte 8 simboluri odată din memoria circuitului (cu un singur qubit) și apoi interpretând string-ul rezultat ca un număr pe 8 biți în baza 2.
+
+\subsection{Implementarea (în cod) a generatoarelor de numere aleatorii cuantice}
+
+Cum circuitele utilizate pentru distribuțiile uniforme sunt destul de simple, voi comenta aici pe scurt codul utilizat pentru inițializarea circuitelor.
+\pagebreak
+\begin{code}
+\begin{minted}{python}
+class QRNG:
+    def __init__(self):
+        self.sim = Aer.get_backend('aer_simulator')
+        self.QC_Hadamard_1bit = QuantumCircuit(1)
+        self.QC_Hadamard_1bit.h(0)
+        self.QC_RY_1bit = QuantumCircuit(1)
+        self.QC_RY_1bit.ry(math.pi/2, 0)
+        self.QC_Hadamard_8bit = QuantumCircuit(8)
+        self.QC_Hadamard_8bit.h(range(0, 8))
+        self.QC_RY_8bit = QuantumCircuit(8)
+        self.QC_RY_8bit.ry(math.pi/2, range(0, 8))
+        self.QC_Uniform_1bit = UniformDistribution(1)
+        self.QC_Uniform_1bit = transpile(self.QC_Uniform_1bit,\
+        self.sim, optimization_level=3)
+        self.QC_Uniform_8bit = UniformDistribution(8)
+        self.QC_Uniform_8bit = transpile(self.QC_Uniform_8bit,\
+        self.sim, optimization_level=3)
+        
+        self.QRNGs = [
+            self.QC_Hadamard_1bit, self.QC_Hadamard_8bit, self.QC_RY_1bit,\
+            self.QC_RY_8bit, self.QC_Uniform_1bit, self.QC_Uniform_8bit
+         ]
+        for i in range(len(self.QRNGs)):
+            self.QRNGs[i].measure_all()
+\end{minted}
+\end{code}
+
+Circuitele sunt denumite reprezentativ. Partea interesantă este pasul de transpilare, care pentru calculatoare cuantice adevărate (care au numai anumite basis gates - porți care pot fi de fapt utilizate), iar restul porților trebuiesc descompuse în acestea. Totuși, backend-ul "aer\_simulator" implementează toate aceste porți logice cuantice, iar pasul de transpilare nu face cine știe ce. Este totuși util pentru circuitele care produc numere pe o distribuție normală, pe care le voi discuta mai departe.

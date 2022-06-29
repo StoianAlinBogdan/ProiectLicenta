@@ -29,7 +29,7 @@ def append_data(name, stats):
 if __name__ == "__main__":
     QRNGs = gens.QRNG()
     PRNGs = gens.PRNG()
-    for i in range(2):
+    for i in range(100):
         print(i)
         for circuit in circuits:
             nums = QRNGs.run_circuit(circuit, 100000)
