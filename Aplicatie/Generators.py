@@ -2,6 +2,7 @@ from email import generator
 from qiskit import Aer, QuantumCircuit, transpile, IBMQ
 from qiskit_finance.circuit.library import UniformDistribution, NormalDistribution
 from qiskit.extensions import Initialize
+from qiskit.providers.ibmq import least_busy
 import math
 from Helpers import Box_Muller
 import numpy as np
@@ -60,7 +61,8 @@ class QRNG:
 
     def login(self):
         provider = IBMQ.enable_account(self.API_KEY)
-        self.backend = provider.get_backend('ibm_oslo')
+        backends = provider.backends(simulator=False, operational=True, filters=lambda x: x.configuration().n_qubits>=4)
+        self.backend = least_busy(backends)
     
     def create_normal_circuit(self, size):
         x = np.linspace(-6, 6, num=2**size)
@@ -94,21 +96,21 @@ class QRNG:
             else:
                 result = self.sim.run(qc, shots=amount, memory=True).result()
         else:
-
+            num_qubits = self.backend.configuration().n_qubits
             if generator_string == 'Hadamard1Bit':
-                qc = QuantumCircuit(7)
-                qc.h(range(7))
+                qc = QuantumCircuit(1)
+                qc.h(range(1))
                 qc.measure_all()
                 qc = transpile(qc, self.backend, optimization_level=3)
                 result = self.backend.run(qc, shots=8*amount, memory=True).result()
             elif generator_string == 'RY1Bit':
-                qc = QuantumCircuit(7)
-                qc.ry(range(7))
+                qc = QuantumCircuit(num_qubits)
+                qc.ry(range(num_qubits))
                 qc.measure_all()
                 qc = transpile(qc, self.backend, optimization_level=3)
                 result = self.backend.run(qc, shots=8*amount, memory=True).result()
             elif generator_string == 'NormalEu8Bit':
-                qc = self.create_normal_circuit(7)
+                qc = self.create_normal_circuit(num_qubits)
                 qc.measure_all()
                 qc = transpile(qc, self.backend, optimization_level=3)
                 result = self.backend.run(qc, shots=amount, memory=True).result()

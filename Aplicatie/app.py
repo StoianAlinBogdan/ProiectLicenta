@@ -149,6 +149,8 @@ if __name__ == "__main__":
                 time = Timer()
                 if generator_string[0:6] != 'Normal':
                     _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
+                else:
+                    _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=True)
                 _VARS['window']['-CIRCUIT_BUTTON-'].update(disabled=False)
             else:
                 prev_time = Timer()
@@ -222,7 +224,7 @@ if __name__ == "__main__":
                     _VARS['window']['-MODE_TEXT-'].update(value='Real Mode', text_color='red')
                     qrngs.API_KEY = API_KEY
                     qrngs.login()
-                    sg.Popup('Real mode engaged! Quantum computer has only 7 Qubits! Not all Circuits implemented!', title='REAL MODE WARNING')
+                    sg.Popup(f'Real mode engaged! Quantum computer {qrngs.backend.name()} has only {qrngs.backend.configuration().n_qubits} Qubits! Not all Circuits implemented!', title='REAL MODE WARNING')
                     break
         
         if event == 'Simulated':

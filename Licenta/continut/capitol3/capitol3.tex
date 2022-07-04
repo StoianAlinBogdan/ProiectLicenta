@@ -138,12 +138,11 @@ De asemenea, din cauza împărțirilor ca numere reale și a rotunjirii, numerel
 \end{minted}
 \end{code}
 
-Cum numerele returnate de framework-ul qiskit pentru experimentele cu circuite cuantice sunt string-uri, construiesc numărul de 8 biți luând câte 8 simboluri odată din memoria circuitului (cu un singur qubit) și apoi interpretând string-ul rezultat ca un număr pe 8 biți în baza 2.
+Cum numerele returnate de framework-ul qiskit pentru experimentele cu circuite cuantice sunt string-uri, construiesc numărul de 8 biți luând câte 8 simboluri odată din memoria circuitului (cu un singur qubit) și apoi interpretez string-ul rezultat ca un număr pe 8 biți în baza 2.
 
 \subsection{Implementarea (în cod) a generatoarelor de numere aleatorii cuantice}
 
 Cum circuitele utilizate pentru distribuțiile uniforme sunt destul de simple, voi comenta aici pe scurt codul utilizat pentru inițializarea circuitelor.
-\pagebreak
 \begin{code}
 \begin{minted}{python}
 class QRNG:
@@ -174,3 +173,113 @@ class QRNG:
 \end{code}
 
 Circuitele sunt denumite reprezentativ. Partea interesantă este pasul de transpilare, care pentru calculatoare cuantice adevărate (care au numai anumite basis gates - porți care pot fi de fapt utilizate), iar restul porților trebuiesc descompuse în acestea. Totuși, backend-ul "aer\_simulator" implementează toate aceste porți logice cuantice, iar pasul de transpilare nu face cine știe ce. Este totuși util pentru circuitele care produc numere pe o distribuție normală, pe care le voi discuta mai departe.
+
+Prin urmare, folosesc numai circuite implementate la nivel de poartă logică de mine însumi, urmate de două circuite din biblioteca qiskit.finance, UniformDistribution.
+
+\subsection{Implementarea circuitului pentru distribuție normală, varianta mea}
+Funcția care compune un circuit care va returna numere aleatoare pe o distribuțue normală este următoarea:
+\begin{code}
+\begin{minted}{python}
+    def create_normal_circuit(self, size):
+        x = np.linspace(-6, 6, num=2**size)
+        probabilities = stats.multivariate_normal.pdf(x, 1, 1)
+        normalized_probabilities = probabilities / np.sum(probabilities)
+        qc_normal = QuantumCircuit(size)
+        initial = Initialize(np.sqrt(normalized_probabilities))
+        distribution = initial.gates_to_uncompute().inverse()
+        qc_normal.compose(distribution, inplace=True)
+        return qc_normal
+\end{minted}
+\end{code}
+În acest fel, generez o funcție densitate de probabilitate pornind de la un spațiu liniar cu valori între extreme (parametrul bounds de la circuitul NormalDistribution din biblioteca qiskit.finance) - adică voi lua 256 de valori la spații egale între valorile [-6, 6]. Apoi, calculez radicalii probabilităților individuale din funcția densitate probabilitate (pentru a inițializa șansele ca un qubit să colapseze în starea $\ket{0}$), după care inversez probabilitățile în circuitul compus pentru a obține șansele de colaps în $\ket{1}$. 
+
+Circuitul rezultat este mult prea mare pentru a putea fi afișat prin metode convenționale. O mică parte apare în figura următoare:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol3/figuri/CircuitNormal.png}
+    \label{fig:CircuitNormal}
+\end{figure}
+
+\section{Implementarea testelor statistice}
+
+\subsection{Testul Z}
+Felul în care am implementat testul Z este un forma two-tailed pentru compararea mediilor a două eșantioane cu varianțe inegale. Astfel, formula pentru calculul parametrului Z în acest caz este
+\begin{code}
+\begin{minted}{python}
+z_calc = (df['counts'].mean() - df2['counts'].mean()) /\
+(math.sqrt(df.var()['counts'] / len(df['counts']) + df2.var()['counts'] /\
+len(df2['counts'])))
+\end{minted}
+\end{code}
+
+unde df reprezintă un DataFrame pandas care conține pe o coloană una dintre valorile posibile (un întreg pe intervalul [0, 255]) și pe cealaltă numărul de apariții a acelui număr în totalitatea numerelor generate, iar df2 reprezintă același lucru, dar pentru o distribuție care "se știe" a fi uniformă (în cazul meu, generată cu numpy.random.randint din biblioteca numpy).
+\subsection[Testul chi pătrat]{Testul $\chi^2$}
+Forma de test chi pătrat implementată de mine este cea propusă în \cite{art:PetrilaMantaUnguranu:IEEESystheory:2014}. Astfel, testul este implementat în felul următor:
+
+\begin{code}
+\begin{minted}{python}
+    interval = [0, 32]
+    sum = 0
+    for i in range(0, 8):
+        interval[0] = 32 * i
+        interval[1] = 32 * i + 32
+        count = np.count_nonzero((nums >= interval[0]) & (nums < interval[1]))
+        sum += (count - len(nums) / 8) ** 2
+    score = ( 8 / (len(nums) * 7) ) * sum
+\end{minted}
+\end{code}
+Unde intervalele se iau 32 câte 32 (mai intâi [0, 32], apoi [32, 64], etc. ) pentru a împărți cele 256 de valori posibile în 8 intervale.
+
+\todo{Celelalte teste la anexe, mentioneaza aici}
+
+\section{Interfața cu utilizatorul}
+Aplicația cu interfață cu utilizatorul a fost, cum am menționat în capitolul precedent, implementată cu ajutorul framework-ului PySimpleGUI.Astfel, aceasta arată în felul următor:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol3/figuri/InterfataCircuit.png}
+    \caption{Interfața după execuția unui circuit, cu circuitul afișat}
+    \label{fig:InterfataCircuit}
+\end{figure}
+Figura reprezintă histograma numerelor generate. 
+
+După apăsarea butonului "Get Numbers", apare o fereastră în felul următor:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{continut/capitol3/figuri/Numere.png}
+    \caption{Fereastra cu numerele generate}
+    \label{fig:FereastraNumere}
+\end{figure}
+Numerele din TextBox reprezintă un eșantion reprezentativ (prima a suta parte din totalul numerelor generate). După apăsarea butoului "Save to file", apare o fereastră specifică sistemului de operare pentru salvarea numerelor în format plain text. Butonul "copy to clipboard" este dezactivat pentru payload-uri de numere mai mari de 4 KB datorită unor limitări în implementare (am dorit a nu folosi unele biblioteci specializate pentru copiat in clipboard, așadar am fost destul de limitat în metode de implementare).
+
+Asupra numerelor generate se execută implicit și testele statistice, împreună cu generarea altor câtorva statistici descriptive. Acestea pot fi vizualizate în tab-ul "Statistics", în felul următor:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol3/figuri/Statistici.png}
+    \caption{Tab-ul cu statisticile}
+    \label{fig:StatisticsWindow}
+\end{figure}
+
+Semnificațiile sunt explicate în tabelul următor:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Statistic & Explanation \\
+        \hline  
+         min, max & Numerele din extremele distribuției  \\
+         count & cantitatea de numere în distribuție  \\
+         uniques & cantitatea de numere unice în distribuție \\
+         25\%, 50\%, 75\% & quartilele 25, 50 și 75 la sută \\
+         mode & modul, adică valoarea care apare cel mai des în distribuție \\
+         std & abaterea standard - dispersia valorilor în jurul valorii medii \\
+         mean & media aritmetică a valorilor din distribuție \\
+         median & mediana (valoarea de mijloc în distribuția sortată) \\
+         skew & skewness-ul reprezintă gradul de asimetricitate a distribuției \\
+         kurtosis & "măsura de direcționare" reprezintă aglomerarea în jurul mediei \\
+         testele statistice & sunt explicate în partea teoretică și în tab\\
+        \hline
+    \end{tabular}
+    \caption{Explicațiile statisticilor din tab-ul "statistics"}
+    \label{tab:StatisticsExplainTable}
+\end{table}

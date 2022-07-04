@@ -808,9 +808,9 @@ totul modulo $2^{32}$. Are o perioadă de $2^{60}$ și aparent era un preferat �
 
 Pentru generatorul SHR3 (3 Shift Register Generator), se folosește relația 
 \[
-Y_n = Y_{n-1} (I + L ˆ 17) (I + R ˆ 13) (I + L ˆ 5) 
+Y_n = Y_{n-1} (I + L \XOR 17) (I + R \XOR 13) (I + L \XOR 5) 
 \]
-, unde "\textasciicircum" reprezintă operația XOR pe biți. Pentru valorile pentru I, L și R voi folosi valorile din implementarea oferită de autor.
+, unde "$\XOR$" reprezintă operația XOR pe biți. Pentru valorile pentru I, L și R voi folosi valorile din implementarea oferită de autor.
 
 \subsubsection{Generatorul KISS}
 
