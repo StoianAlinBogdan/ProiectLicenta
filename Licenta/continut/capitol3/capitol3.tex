@@ -177,7 +177,7 @@ Circuitele sunt denumite reprezentativ. Partea interesantă este pasul de transp
 Prin urmare, folosesc numai circuite implementate la nivel de poartă logică de mine însumi, urmate de două circuite din biblioteca qiskit.finance, UniformDistribution.
 
 \subsection{Implementarea circuitului pentru distribuție normală, varianta mea}
-Funcția care compune un circuit care va returna numere aleatoare pe o distribuțue normală este următoarea:
+Funcția care compune un circuit care va returna numere aleatorii pe o distribuțue normală este următoarea:
 \begin{code}
 \begin{minted}{python}
     def create_normal_circuit(self, size):
@@ -230,7 +230,7 @@ Forma de test chi pătrat implementată de mine este cea propusă în \cite{art:
 \end{code}
 Unde intervalele se iau 32 câte 32 (mai intâi [0, 32], apoi [32, 64], etc. ) pentru a împărți cele 256 de valori posibile în 8 intervale.
 
-\todo{Celelalte teste la anexe, mentioneaza aici}
+Pentru vizualizarea implementării celorlalte teste statistice, vedeți anexa \ref{anexa3:TesteStatistice}.
 
 \section{Interfața cu utilizatorul}
 Aplicația cu interfață cu utilizatorul a fost, cum am menționat în capitolul precedent, implementată cu ajutorul framework-ului PySimpleGUI.Astfel, aceasta arată în felul următor:
@@ -283,3 +283,23 @@ Semnificațiile sunt explicate în tabelul următor:
     \caption{Explicațiile statisticilor din tab-ul "statistics"}
     \label{tab:StatisticsExplainTable}
 \end{table}
+
+Pentru implementarea aplicației cu interfață utilizator, vedeți anexa \ref{anexa2:GUIApp}.
+
+\section{Implementarea transformatei Box-Muller}
+\begin{code}
+\begin{minted}[breaklines, tabsize=1]{python}
+def Box_Muller(u1, u2):
+    u1 = np.array(u1)
+    u2 = np.array(u2)
+    u1 = u1 / max(u1)
+    u2 = u2 / max(u2)
+    z1 = np.sqrt(-2 * np.log(u1, where=u1>0)) * np.cos(2 * math.pi * u2)
+    z2 = np.sqrt(-2 * np.log(u1, where=u1>0)) * np.sin(2 * math.pi * u2)
+    z1 = np.round_((z1 / max(z1))*255)
+    z2 = np.round_((z2 / max(z2))*255)
+    z1 = np.nan_to_num(z1)
+    z2 = np.nan_to_num(z2)
+    return (z1.tolist(), z2.tolist())
+\end{minted}
+\end{code}

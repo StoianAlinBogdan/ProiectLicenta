@@ -292,3 +292,271 @@ internal inner class ScheduleAdapter :
 \fi
 
 
+\silentchapter{Anexe}
+\section{Rezultate Statistice Generatoare}
+\label{anexa1:rez_stat_gens}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsHadamard1Bit.png}
+    \caption{Media statisticilor pentru un circuit cu o poartă Hadamard}
+    \label{fig:StatsBarHadamard1Bit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsHadamard8Bit.png}
+    \caption{Media statisticilor pentru un circuit cu 8 porți Hadamard}
+    \label{fig:StatsBarHadamard8Bit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsRY1Bit.png}
+    \caption{Media statisticilor pentru un circuit cu o poartă RY($\pi/2$)}
+    \label{fig:StatsBarRY1Bit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsRY8Bit.png}
+    \caption{Media statisticilor pentru un circuit cu 8 porți RY($\pi/2$)}
+    \label{fig:StatsBarRY8Bit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsUniform1Bit.png}
+    \caption{Media statisticilor pentru un circuit din biblioteca qiskit.finance cu 1 qubit}
+    \label{fig:StatsBarUniform1Bit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsUniform8Bit.png}
+    \caption{Media statisticilor pentru un circuit din biblioteca qiskit.finance cu 8 qubiți}
+    \label{fig:StatsBarUniform8Bit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsLCG.png}
+    \caption{Media statisticilor pentru un PRNG cu algoritmul LCG}
+    \label{fig:StatsBarLCG}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsKISS.png}
+    \caption{Media statisticilor pentru un PRNG cu algoritmul KISS}
+    \label{fig:StatsBarKISS}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsHWRNG.png}
+    \caption{Media statisticilor pentru HWRNG}
+    \label{fig:StatsBarHWRNG}
+\end{figure}
+\newpage
+
+\section{Implementarea aplicației cu interfață utilizator}
+\label{anexa2:GUIApp}
+\begin{code}
+\begin{minted}[linenos,tabsize=1,breaklines]{Python}
+left_part = [
+        [
+            sg.Listbox(values=list(itertools.chain(*[[x for x in qrngs.QRNGs.keys()], [x for x in prngs.generators]])), key='-LISTBOX-', size=(30,None), expand_x=True, expand_y=True, enable_events=True)
+        ]
+    ]
+    right_part = [
+        [
+             sg.Text('Simulated Mode', key='-MODE_TEXT-', text_color='green') 
+        ],
+        [
+            sg.Canvas(key='-CANVAS-', size=(650,550))
+        ],
+        [
+            sg.Text("Amount of numbers: "), sg.Input(key='-NUMS-', size=(30,1)), sg.Button('Generate', disabled=True, key='-GENERATE_BUTTON-'),
+            sg.Button('Get Numbers', disabled=True, key='-NUMBERS_BUTTON-')
+        ],
+        [
+            sg.Button('Run Box-Muller', disabled=True, key='-BOX-MULLER_BUTTON-'), sg.Button('See Circuit', disabled=True, key='-CIRCUIT_BUTTON-')
+        ]
+        
+    ]
+
+    menu_def = [['&Mode',  ['Simulated', 'Real']], ['&Help']]
+    layout_main = [
+        [sg.Menu(menu_def, tearoff=False, key='-MENU-', font=AppFont)],
+        [sg.Column(left_part, expand_y=True), sg.VSeparator(), sg.Column(right_part, element_justification='center')]
+    ]
+    layout_statistics = [
+        [sg.Multiline(size=(100,30), key='-STATISTICS_BOX-')]
+    ]
+    tabbed_layout = [[sg.TabGroup([[sg.Tab('MainTab', layout_main), sg.Tab('Statistics', layout_statistics)]])]]
+\end{minted}
+\caption{Definirea layout-urilor cu framework-ul PySimpleGUI}
+\end{code}
+\newpage
+\begin{code}
+\begin{minted}[linenos,tabsize=1,breaklines]{python}
+if event == '-GENERATE_BUTTON-':
+    _VARS['window']['-NUMBERS_BUTTON-'].update(disabled=False)
+    if generator_string in qrngs.QRNGs.keys():
+        prev_time = Timer()
+        nums = qrngs.run_circuit(generator_string, int(values['-NUMS-']))
+        time = Timer()
+        if generator_string[0:6] != 'Normal':
+            _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
+        else:
+            _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=True)
+        _VARS['window']['-CIRCUIT_BUTTON-'].update(disabled=False)
+    else:
+        prev_time = Timer()
+        RNG = getattr(prngs, prngs.function_map[generator_string])
+        time = Timer()
+        nums = RNG(int(values['-NUMS-']))
+        _VARS['window']['-BOX-MULLER_BUTTON-'].update(disabled=False)
+        _VARS['window']['-CIRCUIT_BUTTON-'].update(disabled=True)
+    _VARS['window']['-STATISTICS_BOX-'].update('')
+    stats = generate_descriptive_stats(nums)
+    for stat in stats:
+        _VARS['window']['-STATISTICS_BOX-'].print(stat + ': ' + str(stats[stat]))
+    _VARS['window']['-STATISTICS_BOX-'].print(f"Time to execute: {time - prev_time} seconds")
+    if _VARS['plt_fig'] == False:
+        draw_chart(nums)
+    else:
+        update_chart(nums)
+    ran_box_muller = 0
+\end{minted}
+\caption{Implementarea funcționalității butonului de generare din aplicație}
+\end{code}
+\newpage
+\begin{code}
+\begin{minted}[breaklines, tabsize=1]{python}
+if event == 'Real':
+    _VARS['login_window'] = make_login_window()
+    while True:
+        event, values = _VARS['login_window'].read(timeout=500)
+        if event == '-LOGIN_BUTTON-':
+            API_KEY = values['-API_KEY-']
+            _VARS['login_window'].Close()
+            _VARS['window']['-MODE_TEXT-'].update(value='Real Mode', text_color='red')
+            qrngs.API_KEY = API_KEY
+            qrngs.login()
+            sg.Popup(f'Real mode engaged! Quantum computer {qrngs.backend.name()} has only {qrngs.backend.configuration().n_qubits} Qubits! Not all Circuits implemented!', title='REAL MODE WARNING')
+            break
+
+if event == 'Simulated':
+    API_KEY = None
+    qrngs.API_KEY = None
+    _VARS['window']['-MODE_TEXT-'].update(value='Simulated Mode', text_color='green')
+\end{minted}
+\caption{Implementarea determinării modului de acțiune (real sau simulat)}
+\end{code}
+
+\newpage
+
+\section{Implementarea testelor statistice}
+\label{anexa3:TesteStatistice}
+\begin{code}
+\begin{minted}[breaklines, tabsize=1]{python}
+def KS_uniform(nums):
+    nums = np.clip(np.divide(nums, 255), 0.0001, 0.9999)
+    D_plus = 0
+    D_minus = 0
+    N = len(nums)
+    memory_cdf = np.sort(nums)
+    arange1 = np.arange(1.0, N + 1) / N
+    arange2 = np.arange(0.0, N) / N
+    D_plus = (arange1 - memory_cdf).max()
+    D_minus = (memory_cdf - arange2).max()
+    return(max(D_plus, D_minus))
+\end{minted}
+\caption{Implementarea testului Kologomorov-Smirnov}
+\end{code}
+
+\begin{code}
+\begin{minted}[breaklines, tabsize=1]{python}
+def prod_succ(nums):
+    nums = np.array(nums)
+    nums = nums / max(nums)
+    sum = 0
+    for i in range(1, len(nums)):
+        sum += nums[i] * nums[i-1]
+    coef = 1 / (len(nums) - 1) * sum
+    return coef
+\end{minted}
+\caption{Implementarea testului produselor elementelor succesive, propus în \cite{art:PetrilaMantaUnguranu:IEEESystheory:2014}.}
+\end{code}
+
+\begin{code}
+\begin{minted}[breaklines, tabsize=1]{python}
+def correlation(nums):
+    sum1 = 0
+    sum2 = 0
+    nums = np.array(nums)
+    avg = np.average(nums)
+    N = len(nums)
+    for i in range(1, N):
+        sum1 += (nums[i] - avg) * (nums[i-1] - avg)
+    sus = N * sum1
+    for i in range(N):
+        sum2 += ( nums[i] - avg ) ** 2
+    jos = (N - 1) * sum2
+    coef = sus / jos
+    return coef
+\end{minted}
+\caption{Implementarea formei coeficientului de corelație propus în \cite{art:PetrilaMantaUnguranu:IEEESystheory:2014}.}
+\end{code}
+
+\begin{code}
+\begin{minted}[breaklines, tabsize=1]{python}
+def generate_descriptive_stats(nums):
+    dict_for_df = {
+        'nums': nums
+    }
+    df = pd.DataFrame.from_dict(dict_for_df)
+    stats = {}
+    stats['min'] = df['nums'].min()
+    stats['max'] = df['nums'].max()
+    stats['count'] = len(df['nums'])
+    stats['uniques'] = len(set(df['nums']))
+    stats['25%'] = df['nums'].quantile(q=0.25)
+    stats['50%'] = df['nums'].quantile(q=0.5)
+    stats['75%'] = df['nums'].quantile(q=0.75)
+    stats['mode'] = df['nums'].mode()[0]
+    stats['std'] = df['nums'].std()
+    stats['mean'] = df['nums'].mean()
+    stats['median'] = df['nums'].median()
+    stats['skew'] = df['nums'].skew()
+    stats['kurtosis'] = df['nums'].kurt()
+    stats['Kologomorov-Smirnov test vs. uniform (value should be very close to 0 for uniform):'] = KS_uniform(nums)
+    stats['Z-test vs. uniform (Value should be <-2.5 or >2.5: '] = Z_test(nums)
+    stats['Chi squared test for uniformity (Value should be close to 1 for uniform): '] = chi_2_test(nums)
+    stats['Product of successive values (should be 1/4 for uniform): '] = prod_succ(nums)
+    stats['Correlation coefficient (should be 0 for uniform): '] = correlation(nums)
+\end{minted}
+\caption{Implementarea generatorului de statistici descriptive (tab-ul "statistics").}
+\end{code}
+
+\newpage
+
+\section{Circuite folosite pe parcursul lucrării}
+\label{anexa4:circuite}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{anexe/figuri/CircuitHadamard1.png}
+    \caption{Implementarea și figura circuitului pentru Hadamard1Bit}
+    \label{fig:CircuitHadamard1BitAnexa}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{anexe/figuri/CircuitRy1.png}
+    \caption{Implementarea și figura circuitului pentru RY1Bit}
+    \label{fig:CircuitHadamard8BitAnexa}
+\end{figure}
+
+Echivalent pentru variantele cu 8 qubiți.
+Circuitele pentru normale sunt prea mari pentru a fi vizualizate.

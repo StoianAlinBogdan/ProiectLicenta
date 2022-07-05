@@ -4,3 +4,4 @@ import matplotlib.pyplot as plt
 if __name__ == "__main__":
     df = pd.read_csv("./Statistics.csv")
     print(df.groupby('Generator').agg('mean').to_latex())
+    df.groupby('Generator').agg('mean').to_csv('./CSV_FOR_EXCEL.csv')

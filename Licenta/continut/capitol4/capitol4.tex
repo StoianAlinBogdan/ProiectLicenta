@@ -94,7 +94,7 @@ Din păcate, datorită unei schimbări de ultim moment în infrastructura cloud 
     \label{fig:UniformPerformances}
 \end{figure}
 
-Motivul pentru care generatorul de numere aleatoare hardware pare a fi atât de neperformant sunt diferențele de specificații dintre cele două laptopuri descrise în \ref{fig:BenchmarkLenovo} și \ref{fig:BenchmarkMyria}. Scalând rezultatele pentru HWRNG după performanță (cu un factor de 365/922 = 0.396), ținând rezultatele pentru celelalte generatoare pe loc, se obține un timp mediu de executie $17.7 \longrightarrow 7.009$. Chiar și așa, semnificativ mai încet decât timpii de execuție pentru celelalte generatoare, posibil datorită overhead-ului impus de lucru cu kernel-ul Linux.
+Motivul pentru care generatorul de numere aleatorii hardware pare a fi atât de neperformant sunt diferențele de specificații dintre cele două laptopuri descrise în \ref{fig:BenchmarkLenovo} și \ref{fig:BenchmarkMyria}. Scalând rezultatele pentru HWRNG după performanță (cu un factor de 365/922 = 0.396), ținând rezultatele pentru celelalte generatoare pe loc, se obține un timp mediu de executie $17.7 \longrightarrow 7.009$. Chiar și așa, semnificativ mai încet decât timpii de execuție pentru celelalte generatoare, posibil datorită overhead-ului impus de lucru cu kernel-ul Linux.
 
 Mediile timpilor de execuție pentru cele 100 de experimente, după scalarea coloanei HWRNG, sunt prezentate în figura următoare:
 
@@ -163,69 +163,13 @@ Normal8Bit &  0.720289 \\
 
 Folosind algoritmii descriși în capitolul precedent, s-au obținut următoarele rezultate statistice pentru fiecare generator în parte:
 
-
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsHadamard1Bit.png}
-    \caption{Media statisticilor pentru un circuit cu o poartă Hadamard}
-    \label{fig:StatsBarHadamard1Bit}
+    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/ExcelStats.png}
+    \caption{Grafic cu rezultatele statistice pentru fiecare generator in parte. Pentru parametrul Z, ce era mai mare de 3 a fost trecut cu 3.}
+    \label{fig:AllGensExcel}
 \end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsHadamard8Bit.png}
-    \caption{Media statisticilor pentru un circuit cu 8 porți Hadamard}
-    \label{fig:StatsBarHadamard8Bit}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsRY1Bit.png}
-    \caption{Media statisticilor pentru un circuit cu o poartă RY($\pi/2$)}
-    \label{fig:StatsBarRY1Bit}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsRY8Bit.png}
-    \caption{Media statisticilor pentru un circuit cu 8 porți RY($\pi/2$)}
-    \label{fig:StatsBarRY8Bit}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsUniform1Bit.png}
-    \caption{Media statisticilor pentru un circuit din biblioteca qiskit.finance cu 1 qubit}
-    \label{fig:StatsBarUniform1Bit}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsUniform8Bit.png}
-    \caption{Media statisticilor pentru un circuit din biblioteca qiskit.finance cu 8 qubiți}
-    \label{fig:StatsBarUniform8Bit}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsLCG.png}
-    \caption{Media statisticilor pentru un PRNG cu algoritmul LCG}
-    \label{fig:StatsBarLCG}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsKISS.png}
-    \caption{Media statisticilor pentru un PRNG cu algoritmul KISS}
-    \label{fig:StatsBarKISS}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{continut/capitol4/figuri/StatsHWRNG.png}
-    \caption{Media statisticilor pentru HWRNG}
-    \label{fig:StatsBarHWRNG}
-\end{figure}
+Pentru rezultatele statistice pentru fiecare generator, separat, vedeți Anexa \ref{anexa1:rez_stat_gens}.
 
 Și, aceleași date, în formă compactă, tabelară:
 
@@ -245,3 +189,5 @@ HWRNG &  127.823104 &  0.004794 &  16.531762 &          1.722331 &              
 \end{tabular}}
 
 Motivul pentru care testul Z dă valori atât de distribuite este din cauză că este de tip two-tailed; dacă generatorul are tendința să aibe valori atât mai mari decât (+)Z critic, cât și mai mici decât (-)Z critic, atunci media ar trebui să fie aproape 0. Dacă are tendința numai spre o coadă, atunci trebuie să fie o valoare oarecum extremă. Valorile între [-2.5, 2.5], fără valorile apropriate de 0, sunt cele rele.
+
+

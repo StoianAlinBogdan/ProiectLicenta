@@ -23,3 +23,53 @@ Concluziile finale au un rol semnificativ în cadrul lucrării de diplomă, care
 \textcolor{gray}{\lipsum[2-4]}
 
 \fi
+
+\silentchapter{Concluzii}
+\section*{Concluzii principale}
+Pe baza timpilor de execuție, pentru distribuțiile uniforme, generatoarele de numere pseudoaleatorii sunt net superioare. În categoria generatoarelor de numere aleatorii cuantice, circuitele implementate direct pe numărul de biți necesari au performanțe de 2-3 ori mai bune decât cele implementate pe un singur qubit. Indiferent de cum este privită situația, generatorul de numere aleatorii hardware este cel mai încet dintre toate, chiar și după scalarea după performanțele mașinăriilor.
+
+În mod nesurprinzător, pentru distribuțiile normale, metoda cea mai eficientă este de generare cu un PRNG și apoi aplicarea transformatei Box-Muller. Totuși, în mod surprinzător, generarea utilizând cel mai performant circuit cuantic, cel cu 8 qubiți și numai poartă RY($\pi/2)$), și trecerea distribuției rezultate prin transformata Box-Muller este la fel de eficientă ca circuitul pentru generare de numere pe distribuție normală din biblioteca qiskit.finance. Acest circuit are sute până la mii de porți cuantice, lucru care face performanța să fie un lucru surprinzător!
+
+Când vine vorba de teste statistice, per ansamblu, tot generatoarele de numere pseudoaleatorii au tendința de a avea cele mai bune rezultate. Totuși, diferențele din parametrii statistici sunt relativ minore, pe lângă faptul că sunt interpretabile. Majoritatea generatoarelor dau cel puțin rezultate acceptabile din punct de vedere statistic.
+
+Prin urmare, în urma acestei lucrări, putem trage niște concluzii pe baza caracteristicilor dorite din partea generatoarelor de numere aleatorii, prezentate în tabelul următor:
+
+\begin{tabular}{|c|c|}
+     \hline
+     Caracteristică & Cel mai bun tip de generator  \\
+     \hline
+     Eficiență & PRNG \\
+     Lipsă determinism & QRNG \\
+     Lipsă perioadă & QRNG \\
+     Calitatea numerelor & QRNG / PRNG \\
+     \hline
+\end{tabular}
+
+Ca un exemplu de usecase-uri la care ar fi cele mai bune fiecare categorie de generatoare, vedeți tabelul următor:
+
+\begin{tabular}{|c|c|}
+    \hline
+     Usecase & Cel mai bun tip de generator \\
+     \hline
+     Loterii, promoții aleatorii & QRNG \\
+     Jocuri (netrucate) & QRNG \\
+     Eșantionare aleatorie & QRNG \\
+     Statistică și modelare & PRNG \\
+    \hline
+\end{tabular}
+
+\section*{Obiective modificate și nerealizate}
+
+Inițial, propusesem verificarea performanțelor pe calculatoare cuantice adevărate, dar din cauza unor modificări de ultim moment în infrastructura cloud de la IBM Quantum Experience (vezi figurile \ref{fig:WaitTime1} \ref{fig:WaitTime2}), acest lucru a devenit imposibil. 
+
+De asemenea, nu am reușit a implementa teste statistice pentru distribuțiile normale, așa că nu am mai adăugat analize statistice pentru acestea (am adăugat numai implementările).
+Pe lângă acestea, doream implementarea a mai multe feature-uri pentru aplicația cu interfață utilizator, inclusiv atingerea agnosticismului de platformă de backend (qiskit e obligatoriu, în momentul de față), dar nu am reușit decât un schelet de aplicație (pe lângă lipsa de estetică a acesteia...).
+
+\section*{Posibile direcții de dezvoltare}
+
+Principala direcție de adăugat pe viitor acestui proiect este, cum am zis precedent, testarea performanțelor pe un calculator cuantic adevărat. Acest lucru nu este dificil de făcut, mai ales cu dezvoltarea generatoarelor pe un singur qubit, dar din cauza schimbărilor din serviciile cloud, nu am reușit a realiza acest lucru în timp util.
+
+De asemenea, ar trebui adăugate mai multe feature-uri la aplicație, inclusiv din cele "distractive" de pe random.org (generare de culori aleatorii, amestecare de liste, etc.).
+
+Pe lângă acestea, ar trebui adăugate și măsurători de performanță pentru generatoarele de numere aleatorii pe distribuție normală (majoritatea testelor sunt gândite pentru a se aplica pe o distribuție uniformă, cu rezultate interpretabile numai pentru uniforme), atât când vine vorba de timpi de execuție, cât și de parametri statistici.
+

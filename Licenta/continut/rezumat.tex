@@ -15,12 +15,14 @@
 \end{center}
 
 
-Lucrarea de diplomă/disertație va conține un scurt rezumat (abstract – termenul în engleză) de maximum o pagină, care expune ideile principale ale tezei, contribuția autorului la realizarea temei propuse precum și concluziile obținute. Formulați ideile principale ale lucrării în propoziții sau fraze cât mai simple, fără amănunte nesemnificative.
+Lucrarea de față își propune topica principală a analizei punctelor tari și a celor slabe a unor eșantioane reprezentative din toate categoriile de generatoare de numere aleatorii, adică propune compararea perfomanțelor și a calității numerelor generate pentru două generatoare de numere pseudoaleatorii (PRNG), un generator de numere aleatorii hardware (HRNG) și mai multe circuite cuantice care duc la generarea de numere aleatorii pe o distribuție uniformă (QRNG).
 
-\textit{Recomandare neoficială: Rezumatul se compune, de obicei, la finalizarea redactării lucrării de licență/disertație, după finalizarea capitolului Concluzii}
+În acest sens, se prezintă conceptele teoretice ale funcționării QRNG-urilor, formulele de calcul a PRNG-urilor analizate, dar și concepte generale legate de funcționarea generatoarelor de numere aleatorii.
 
-\begin{itemize}
-    \item Reflectă capacitatea absolventului de a prezenta sintetic tema abordată, obiectivul,
-    proiectarea aplicației, modul de implementare și rezultatele obținute;
-    \item Rezumatul lucrării în format pdf va fi publicat pe site-ul facultății, înaintea susținerii publice.
-\end{itemize}
+Pe lângă acestea, se prezintă aspecte legate de testele statistice și măsurătorile implementate pentru determinarea calității numerelor aleatorii.
+
+Ulterior, se prezintă cerințele execuției proiectului și bibliotecile / framework-urile utilizate în toate aspectele lucrării, principale printre acestea fiind Qiskit pentru lucrul cu circuite cuantice și PySimpleGUI pentru aplicația cu interfață utilizator.
+
+Apoi, se prezintă pe scurt implementarea PRNG-urilor, a QRNG-urilor și a testelor statistice descrise în primul capitol, apoi și a aplicației cu interfață utilizator. 
+
+În cele din urmă, se prezintă măsurătorile de performanță a generatoarelor, printre care timpii de execuție, dar și parametrii statistici descriși anterior, pe baza cărora se trag niște concluzii. În acest sens, se determină că, în aproximativ toate aspectele în afara aleatorității globale (global randomness), PRNG-urile sunt net superioare.
